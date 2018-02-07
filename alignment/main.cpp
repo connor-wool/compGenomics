@@ -8,13 +8,19 @@ Cpts 471, WSU, Spring 2018
 #include <string>
 #include <sstream>
 #include <stdlib.h>
-#include "alignTools.cpp"
+#include "alignmentTable.hpp"
+#include "affineScorer.hpp"
 
 using namespace std;
+
+void 
 
 int main(int argc, char *argv[]){
 
     // ./a.out inputFileName <0:global 1:local> <optional:parametersFile>
+    
+    int shouldReadParamsFile = 0;
+
     if(argc < 3){
         cout << "Usage: filename <FastaSequenceFile> <0:global, 1:local> <optional:parametersFile>\n";
         cout << "Invalid Parameters entered. Exiting\n";
@@ -37,9 +43,13 @@ int main(int argc, char *argv[]){
     string paramFileName;
     if(argc == 4){
         paramFileName = argv[3];
+        shouldReadParamsFile = 1;
         cout << "param file: " << paramFileName << "\n";
     }
 
+    if(shouldReadParamsFile){
+
+    }
     
 
 }
