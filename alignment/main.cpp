@@ -13,8 +13,6 @@ Cpts 471, WSU, Spring 2018
 
 using namespace std;
 
-void 
-
 int main(int argc, char *argv[]){
 
     // ./a.out inputFileName <0:global 1:local> <optional:parametersFile>
