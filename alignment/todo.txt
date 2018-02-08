@@ -1,0 +1,9 @@
+//THE TODO LIST * Project 1 (local global alignment)
+
+1. Add FASTA file example to directory
+2. Demonstrate FASTA parser works
+3. Implement global alignment with Affine scoring
+4. Implement local alignment with Affine scoring
+5. Add controls so that user can run alignment of their choice
+6. Finalize printed output for both methods
+    a) could this be standardized?
