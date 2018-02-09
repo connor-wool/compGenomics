@@ -10,17 +10,24 @@ string DNA sequences.
 
 #include <vector>
 #include <string>
+
 #include "affineScorer.hpp"
+#include "fastaParser.hpp"
+#include "geneSequence.hpp"
 
 using namespace std;
 
+enum Direction
+{
+    //insertions from left, matches on diagonal, deletions from top
+    INS, MATCH, DEL
+};
+
 //holds information about a cell of the table
-typedef struct internalCell{
-    int maxScore;
-    int subScore;
-    int delScore;
-    int insScore;
-}CELL;
+typedef struct tableCell{
+    int score;
+    Direction direction;
+};
 
 class AlignmentTable{
     private:
@@ -28,8 +35,9 @@ class AlignmentTable{
         string s2;
         int nrows;
         int ncols;
-        vector<vector<CELL>> internal_table;
+        vector<vector<tableCell>> internal_table;
         AffineScorer internal_scorer;
+
     public:
         void initTable();
 
@@ -52,7 +60,7 @@ void AlignmentTable::initTable(){
     this->ncols = 1 + s1.length();
 
     for(int i = 0; i < nrows; i++){
-        vector<CELL> temp;
+        vector<tableCell> temp;
         internal_table[i] = temp;
     }
 }

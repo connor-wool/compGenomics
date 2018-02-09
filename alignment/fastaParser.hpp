@@ -1,7 +1,20 @@
+/*
+Connor Wool - Spring 2018
+WSU; Cpts 471; Computational Genomics
+Prof. Ananth;
 
+This class defines an object that knows how to read and handle FASTA formatted files.
 
-#ifndef FASTAPARSER_H
-#define FASTAPARSER_H
+To use it, first the "setInputFile" function must be called to tell the object the name
+of the file to read. Then, the "readFile" function is called. This causes the object
+to process the given file, and store the sequences in an internal vector of "GeneSequence" objects.
+Finally, the function "getSequences" returns a copy of the internal vector of sequences.
+
+In the future, I'd like to have this class inherit from a parent class of "FileParser",
+but that's outside the current scope of work.
+*/
+
+#pragma once
 
 #include <string>
 #include <vector>
@@ -23,27 +36,13 @@ class FastaParser{
         }
 
         int readFile();
-
         vector<GeneSequence> getSequences();
 };
 
+//returns a deep copy of the internal GeneSequence vector
 vector<GeneSequence> FastaParser::getSequences(){
-    
-    cout << "copying sequences\n";
-    cout << "internal sequence vector\n";
-    for (GeneSequence g : this->sequences)
-    {
-        cout << g.name << " : " << g.sequence << "\n";
-    }
-
     vector<GeneSequence> temp;
     temp = this->sequences;
-
-    cout << "copied sequence vector\n";
-    for (GeneSequence g : temp)
-    {
-        cout << g.name << " : " << g.sequence << "\n";
-    }
     return temp;
 }
 
@@ -54,37 +53,36 @@ int FastaParser::readFile(){
         return -1;
     }
 
-    string line;
-    ifstream inputStream;
-    GeneSequence *currentSequence = nullptr;
+    string line;            //stores return data from each readline call
+    ifstream inputStream;   //stream object handling input file
+    int index = -1;         //used to track current GeneSequence object
+
+    //opens the file for reading only
     inputStream.open(this->filename, std::ifstream::in);
 
-    if (inputStream.is_open()){
+    if(inputStream.is_open()){
         while(getline(inputStream,line)){
 
-            if(line.empty()) { continue; }
+            if(line.empty()) { continue; }  //skip over empty lines
 
-            //char '>' indicates start of new sequence
+            /* char '>' indicates start of new sequence. We will
+            add a new GeneSequence object to the vector, increment
+            the index value, and set the name of the GeneSequence object. */
             if(line[0] == '>'){
-
-                GeneSequence newSequence = GeneSequence();
-                currentSequence = &newSequence;
-                this->sequences.push_back(newSequence);
-
+                this->sequences.push_back(GeneSequence());
+                index++;
                 stringstream s = stringstream(line);
                 string sequenceID;
                 s >> sequenceID;
-                sequenceID.erase(0, 1);         //removes the '>' character
-                currentSequence->name = sequenceID;
-                cout << "sequence name from GeneSequence object: `" << currentSequence->name << "`\n";
+                sequenceID.erase(0, 1);     //removes the '>' character
+                this->sequences[index].name = sequenceID;
             }
 
+            /* If the line isn't empty, and doesn't start a new sequence,
+            we can safely append the whole line to the current sequence. */
             else{
-                currentSequence->sequence.append(line);
+                this->sequences[index].sequence.append(line);
             }
         }
     }
-    
 }
-
-#endif
