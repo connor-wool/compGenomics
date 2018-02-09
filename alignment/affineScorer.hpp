@@ -29,6 +29,18 @@ class AffineScorer
     public:
         int scoreCell(int row, int col);
         int parseFile(string paramFileName);
+        int match(){
+            return this->matchScore;
+        }
+        int misMatch(){
+            return this->misMatchScore;
+        }
+        int h(){
+            return this->h;
+        }
+        int g(){
+            return this->g;
+        }
 };
 
 int AffineScorer::parseFile(string paramFileName){

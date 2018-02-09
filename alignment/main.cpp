@@ -53,11 +53,14 @@ int main(int argc, char *argv[]){
 
     table.initScorer(paramsFilename);
     table.initSequences(sequenceFilename);
+    table.initTable();
 
     if(userChoice == 0){
+        table.fillTable(0);
         table.globalAlign();
     }
     if(userChoice == 1){
+        table.fillTable(1);
         table.localAlign();
     }
 }
