@@ -1,7 +1,12 @@
+/*
+Connor Wool - Spring 2018
+CPTS 471; Prof. Ananth;
 
+This class defines an object that stores a Gene sequence with it's name.
+This is a trivial class, designed for portability and later extension.
+*/
 
-#ifndef GENESEQUENCE_H
-#define GENESEQUENCE_H
+#pragma once
 
 #include <string>
 
@@ -12,5 +17,3 @@ class GeneSequence{
         string name;
         string sequence;
 };
-
-#endif

@@ -8,8 +8,7 @@ it can be used for either local or global alignment
 cases.
 */
 
-#ifndef AFFINESCORER_H
-#define AFFINESCORER_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -33,6 +32,9 @@ class AffineScorer
 };
 
 int AffineScorer::parseFile(string paramFileName){
+
+    cout << "Parsing parameters file\n";
+
     if(paramFileName.empty()){
         cout << "Error parsing params file, no filename provided.";
         return -1;
@@ -74,5 +76,3 @@ int AffineScorer::parseFile(string paramFileName){
 int AffineScorer::scoreCell(int row, int col){
     return 1;
 }
-
-#endif

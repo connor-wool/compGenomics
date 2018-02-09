@@ -5,8 +5,7 @@ This class is designed to hold all that data about two
 string DNA sequences. 
 */
 
-#ifndef ALIGNMENTTABLE_H
-#define ALIGNMENTTABLE_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -18,7 +17,7 @@ string DNA sequences.
 using namespace std;
 
 //holds information about a cell of the table
-typedef struct tableCell{
+struct tableCell{
     int matchScore;
     int insertionScore;
     int deletionScore;
@@ -35,7 +34,7 @@ class AlignmentTable{
         FastaParser parser;     //parse the input file and store data;
         vector<GeneSequence> sequences; //stores sequences from parser
 
-      public:
+    public:
         void initTable();
 
         void initSequences(string sequenceFile){
@@ -75,5 +74,3 @@ void AlignmentTable::globalAlign(){
 void AlignmentTable::localAlign(){
 
 }
-
-#endif

@@ -48,6 +48,8 @@ vector<GeneSequence> FastaParser::getSequences(){
 
 int FastaParser::readFile(){
 
+    cout << "Parsing FASTA file\n";
+
     if(this->filename.empty()){
         cout << "Error parsing FASTA file, no filename provided.";
         return -1;
@@ -84,5 +86,13 @@ int FastaParser::readFile(){
                 this->sequences[index].sequence.append(line);
             }
         }
+    }
+
+    cout << "FASTA file parsed!\n";
+    for(GeneSequence g : this->sequences){
+        cout << "++++++++++\n";
+        cout << "Name: `" << g.name << "`\n";
+        cout << "Sequence:\n" << g.sequence << "\n";
+        cout << "++++++++++\n";
     }
 }
