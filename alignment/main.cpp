@@ -59,6 +59,7 @@ int main(int argc, char *argv[]){
         table.fillTable(0);
         table.globalAlign();
     }
+    
     if(userChoice == 1){
         table.fillTable(1);
         table.localAlign();

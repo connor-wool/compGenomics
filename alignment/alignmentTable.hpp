@@ -27,17 +27,30 @@ struct tableCell
     int deletionScore;
 };
 
+enum Direction
+{
+    SUBSTITUTION,
+    INSERTION,
+    DELETION
+};
+
 class AlignmentTable
 {
   private:
     /*  s1 and s2 store the strings during the sequencing computation.
         The sequenced strings are then pushed into s1_sequenced and s2_sequenced,
         with chars marking where gaps have been added to each. As a check,
-        the lengths of s1_sequenced and s2_sequenced should match.  */
+        the lengths of s1_sequenced and s2_sequenced should match.
+        s3 is the string that will fit in between s1_sequenced and s2_sequenced  */
 
     string s1, s2;
     int nrows, ncols;
-    string s1_sequenced, s2_sequenced;
+    string s1_sequenced, s2_sequenced, s3_sequenced;
+
+    //used for the local alignment algorithm.
+    int local_align_i;
+    int local_align_j;
+    int local_align_max;
 
     //Stores cells during computation
     vector<vector<tableCell>> internal_table;
@@ -52,6 +65,7 @@ class AlignmentTable
     int scoreIns(int i, int j);
     int scoreSub(int i, int j);
     int getScore(int i, int j);
+    Direction getDirection(int i, int j);
 
   public:
     void initTable();
@@ -73,6 +87,7 @@ class AlignmentTable
     void globalAlign();
     void localAlign();
     void printTable();
+    void retrace(int mode);
 };
 
 void AlignmentTable::printTable(){
@@ -224,6 +239,22 @@ int AlignmentTable::getScore(int i, int j){
     return max;
 }
 
+Direction AlignmentTable::getDirection(int i, int j){
+
+    tableCell *current = &this->internal_table[i][j];
+
+    int maxVal = getScore(i, j);
+    if(current->matchScore == maxVal){
+        return SUBSTITUTION;
+    }
+    if(current->deletionScore == maxVal){
+        return DELETION;
+    }
+    if(current->insertionScore == maxVal){
+        return INSERTION;
+    }
+}
+
 //TODO:
 //create empty table (vector of vectors)
 //set string 1 and string 2 from vector of sequences
@@ -274,6 +305,9 @@ void AlignmentTable::fillTable(int mode)
     }
     else{
         cout << "Filling table for local alignment\n";
+        this->local_align_i = -1;
+        this->local_align_j = -1;
+        this->local_align_max = NEGATIVE_INFINITY;
     }
 
     if (mode == 0)   //prepare for global alignment
@@ -340,8 +374,38 @@ void AlignmentTable::localAlign()
     {
         for (int j = 1; j < this->internal_table[0].size(); j++){
             scoreCell(i, j, 1);
+            if(getScore(i,j) > this->local_align_max){
+                this->local_align_max = getScore(i, j);
+                this->local_align_i = i;
+                this->local_align_j = j;
+            }
         }
     }
 
     this->printTable();
+}
+
+void AlignmentTable::retrace(int mode){
+    int i, j;
+
+    //initialize our starting point in the table
+    //we use the last square for global alignment
+    //we use the max square for local alignment
+    if(mode == 0){
+        i = this->internal_table.size() -1 ;
+        j = this->internal_table[0].size() -1 ;
+    }
+    else if(mode == 1){
+        i = this->local_align_i;
+        j = this->local_align_j;
+    }
+
+    while(i > -1 && j > -1){
+        Direction d = this->getDirection(i, j);
+        /*switch(d){
+            case SUBSTITUTION:
+
+        }
+        */
+    }
 }
