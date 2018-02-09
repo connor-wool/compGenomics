@@ -386,6 +386,14 @@ void AlignmentTable::localAlign()
 }
 
 void AlignmentTable::retrace(int mode){
+
+    this->s1_sequenced = "";
+    this->s2_sequenced = "";
+    this->s3_sequenced = "";
+
+    cout << "Running retrace function\n";
+    cout << "s1_sequenced: `" << s1_sequenced << "`\n";
+
     int i, j;
 
     //initialize our starting point in the table
@@ -400,12 +408,43 @@ void AlignmentTable::retrace(int mode){
         j = this->local_align_j;
     }
 
-    while(i > -1 && j > -1){
-        Direction d = this->getDirection(i, j);
-        /*switch(d){
-            case SUBSTITUTION:
+    cout << "Retrace values: i=" << i << " j=" << j << "\n";
 
-        }
-        */
+    while(i >= 0 && j >= 0){
+        Direction d = this->getDirection(i, j);
+        switch(d){
+            case DELETION:
+                cout << "DELETION\n";
+                this->s1_sequenced.insert(0, "-");
+                this->s2_sequenced.insert(0, "" + this->s2[i]);
+                this->s3_sequenced.insert(0, " ");
+                j--;
+                break;
+            case INSERTION:
+                cout << "INSERTION\n";
+                this->s1_sequenced.insert(0, "" + this->s1[j]);
+                this->s2_sequenced.insert(0, "-");
+                this->s3_sequenced.insert(0, " ");
+                i--;
+                break;
+            case SUBSTITUTION:
+                cout << "SUBSTITUTION\n";
+                this->s1_sequenced.insert(0, "" + this->s1[j]);
+                this->s2_sequenced.insert(0, "" + this->s2[i]);
+                if(this->s1[j] == this->s2[i]){
+                    this->s3_sequenced.insert(0, "|");
+                }
+                else{
+                    this->s3_sequenced.insert(0, " ");
+                }
+                i--;
+                j--;
+                break;
+            default:
+                cout << "DEFAULT CASE, OH NO!\n";
+            }
     }
+
+    cout << "Printing final alignments\n";
+    cout << "`" << this->s1_sequenced << "`\n";
 }
