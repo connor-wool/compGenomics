@@ -6,9 +6,12 @@ string DNA sequences.
 */
 
 #pragma once
+#define NEGATIVE_INFINITY -9999
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <iomanip>
 
 #include "affineScorer.hpp"
 #include "fastaParser.hpp"
@@ -44,7 +47,7 @@ class AlignmentTable
     vector<GeneSequence> sequences; //stores sequences from parser
 
     //a function to score a specific cell in the table
-    int scoreCell(int i, int j);
+    void scoreCell(int i, int j, int mode);
     int scoreDel(int i, int j);
     int scoreIns(int i, int j);
     int scoreSub(int i, int j);
@@ -69,14 +72,24 @@ class AlignmentTable
 
     void globalAlign();
     void localAlign();
+    void printTable();
 };
+
+void AlignmentTable::printTable(){
+    for(vector<tableCell> v1 : internal_table){
+        for(tableCell t : v1){
+            cout << "[" << setw(5) << t.insertionScore << ", " << setw(5) << t.matchScore << ", " << setw(5) << t.deletionScore << "] ";
+        }
+        cout << "\n";
+    }
+}
 
 int AlignmentTable::scoreDel(int i, int j)
 {
     if (i > 0)
     {
         //initialize max value to be a small int value
-        int max = INT32_MIN / 2;
+        int max = NEGATIVE_INFINITY;
 
         //get a pointer to the previous cell we want to reference
         tableCell *previous = &internal_table[i - 1][j];
@@ -100,7 +113,7 @@ int AlignmentTable::scoreDel(int i, int j)
     else
     {
         //if we're on the edge, return a small int value
-        return INT32_MIN / 2;
+        return NEGATIVE_INFINITY;
     }
 }
 
@@ -109,7 +122,7 @@ int AlignmentTable::scoreIns(int i, int j)
     if (j > 0)
     {
         //initialize max value to be a small int value
-        int max = INT32_MIN / 2;
+        int max = NEGATIVE_INFINITY;
 
         //get a pointer to the previous cell we want to reference
         tableCell *previous = &internal_table[i][j - 1];
@@ -133,7 +146,7 @@ int AlignmentTable::scoreIns(int i, int j)
     else
     {
         //if we're on the edge, return a small int value
-        return INT32_MIN / 2;
+        return NEGATIVE_INFINITY;
     }
 }
 
@@ -143,7 +156,7 @@ int AlignmentTable::scoreSub(int i, int j)
     if (i > 0 && j > 0)
     {
         //initialize max value to be a small int value
-        int max = INT32_MIN / 2;
+        int max = NEGATIVE_INFINITY;
 
         //get a pointer to the previous cell we want to reference
         tableCell *previous = &internal_table[i - 1][j - 1];
@@ -175,21 +188,30 @@ int AlignmentTable::scoreSub(int i, int j)
     else
     {
         //if we're on the edge, return a small int value
-        return INT32_MIN / 2;
+        return NEGATIVE_INFINITY;
     }
 }
 
-int AlignmentTable::scoreCell(int i, int j)
+void AlignmentTable::scoreCell(int i, int j, int mode)
 {
     tableCell *current = &internal_table[i][j];
     current->deletionScore = scoreDel(i, j);
+    if(mode == 1 && current->deletionScore < 0){
+        current->deletionScore = 0;
+    }
     current->insertionScore = scoreIns(i, j);
+    if(mode == 1 && current->insertionScore < 0){
+        current->insertionScore = 0;
+    }
     current->matchScore = scoreSub(i, j);
+    if(mode == 1 && current->matchScore < 0){
+        current->matchScore = 0;
+    }
 }
 
 int AlignmentTable::getScore(int i, int j){
     tableCell *current = &internal_table[i][j];
-    int max = INT32_MIN / 2;
+    int max = NEGATIVE_INFINITY;
     if (current->matchScore > max){
         max = current->matchScore;
     }
@@ -247,33 +269,79 @@ void AlignmentTable::fillTable(int mode)
 {
     tableCell *current;
 
+    if(mode == 0){
+        cout << "Filling table for global alignment\n";
+    }
+    else{
+        cout << "Filling table for local alignment\n";
+    }
+
     if (mode == 0)   //prepare for global alignment
     {
         current = &this->internal_table[0][0];
-        current->deletionScore = INT32_MIN / 2;
-        current->insertionScore = INT32_MIN / 2;
+        current->deletionScore = NEGATIVE_INFINITY;
+        current->insertionScore = NEGATIVE_INFINITY;
         current->matchScore = 0;
         for (int i = 1; i < this->internal_table.size(); i++){
             current = &this->internal_table[i][0];
-            current->matchScore = INT32_MIN / 2;
-            current->insertionScore = INT32_MIN / 2;
+            current->matchScore = NEGATIVE_INFINITY;
+            current->insertionScore = NEGATIVE_INFINITY;
             current->deletionScore = this->scorer.h() + (i * this->scorer.g());
         }
         for (int j = 1; j < this->internal_table[0].size(); j++){
             current = &this->internal_table[0][j];
-            current->matchScore = INT32_MIN /2;
-            current->deletionScore = INT32_MIN / 2;
+            current->matchScore = NEGATIVE_INFINITY;
+            current->deletionScore = NEGATIVE_INFINITY;
             current->insertionScore = this->scorer.h() + (j * this->scorer.g());
         }
     }
+
+    else if(mode == 1){
+        current = &this->internal_table[0][0];
+        current->deletionScore = NEGATIVE_INFINITY;
+        current->insertionScore = NEGATIVE_INFINITY;
+        current->matchScore = 0;
+        for (int i = 1; i < this->internal_table.size(); i++){
+            current = &this->internal_table[i][0];
+            current->matchScore = NEGATIVE_INFINITY;
+            current->insertionScore = NEGATIVE_INFINITY;
+            current->deletionScore = 0;
+        }
+        for (int j = 1; j < this->internal_table[0].size(); j++){
+            current = &this->internal_table[0][j];
+            current->matchScore = NEGATIVE_INFINITY;
+            current->deletionScore = NEGATIVE_INFINITY;
+            current->insertionScore = 0;
+        }
+    }
+
+    this->printTable();
 }
 
 //global initializes the edges using the scoring method
 void AlignmentTable::globalAlign()
 {
+    cout << "Running global alignment\n";
+    for (int i = 1; i < this->internal_table.size(); i++)
+    {
+        for (int j = 1; j < this->internal_table[0].size(); j++){
+            scoreCell(i, j, 0);
+        }
+    }
+
+    this->printTable();
 }
 
 //local initialzes both local and global edges to 0
 void AlignmentTable::localAlign()
 {
+    cout << "Running local alignment\n";
+    for (int i = 1; i < this->internal_table.size(); i++)
+    {
+        for (int j = 1; j < this->internal_table[0].size(); j++){
+            scoreCell(i, j, 1);
+        }
+    }
+
+    this->printTable();
 }

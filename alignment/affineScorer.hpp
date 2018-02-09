@@ -23,8 +23,8 @@ class AffineScorer
     private:
         int matchScore;
         int misMatchScore;
-        int h;
-        int g;
+        int hScore;
+        int gScore;
 
     public:
         int scoreCell(int row, int col);
@@ -36,10 +36,10 @@ class AffineScorer
             return this->misMatchScore;
         }
         int h(){
-            return this->h;
+            return this->hScore;
         }
         int g(){
-            return this->g;
+            return this->gScore;
         }
 };
 
@@ -71,18 +71,18 @@ int AffineScorer::parseFile(string paramFileName){
                 this->misMatchScore = value;
             }
             if(key.compare("h") == 0){
-                this->h = value;
+                this->hScore = value;
             }
             if(key.compare("g") == 0){
-                this->g = value;
+                this->gScore = value;
             }
         }
     }
     cout << "Finished parsing params file\n";
     cout << "match: " << this->matchScore << "\n";
     cout << "mismatch: " << this->misMatchScore << "\n";
-    cout << "h: " << this->h << "\n";
-    cout << "g: " << this->g << "\n";
+    cout << "h: " << this->hScore << "\n";
+    cout << "g: " << this->gScore << "\n";
 }
 
 int AffineScorer::scoreCell(int row, int col){
