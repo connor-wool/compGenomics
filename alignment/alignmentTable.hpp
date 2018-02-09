@@ -17,16 +17,11 @@ string DNA sequences.
 
 using namespace std;
 
-enum Direction
-{
-    //insertions from left, matches on diagonal, deletions from top
-    INS, MATCH, DEL
-};
-
 //holds information about a cell of the table
 typedef struct tableCell{
-    int score;
-    Direction direction;
+    int matchScore;
+    int insertionScore;
+    int deletionScore;
 };
 
 class AlignmentTable{
@@ -36,18 +31,26 @@ class AlignmentTable{
         int nrows;
         int ncols;
         vector<vector<tableCell>> internal_table;
-        AffineScorer internal_scorer;
+        AffineScorer score;     //stores scores from param file
+        FastaParser parser;     //parse the input file and store data;
+        vector<GeneSequence> sequences; //stores sequences from parser
 
-    public:
+      public:
         void initTable();
+
+        void initSequences(string sequenceFile){
+            this->parser.setInputFile(sequenceFile);
+            this->parser.readFile();
+            sequences = this->parser.getSequences();
+        }
 
         void initStrings(string new_s1, string new_s2){
             this->s1 = new_s1;
             this->s2 = new_s2;
         }
 
-        void initScorer(AffineScorer a){
-            this->internal_scorer = a;
+        void initScorer(string paramFileName){
+            this->score.parseFile(paramFileName);
         }
 
         void globalAlign();

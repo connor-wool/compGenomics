@@ -5,6 +5,7 @@
 #include <vector>
 #include "fastaParser.hpp"
 #include "geneSequence.hpp"
+#include "affineScorer.hpp"
 
 using namespace std;
 
@@ -15,6 +16,11 @@ void printResults(int code, string name){
     else{
         cout << "TEST: " << name << " Passed, code: " << code << "\n";
     }
+}
+
+int testAffineScorer(){
+    AffineScorer a = AffineScorer();
+    a.parseFile("parameters.config");
 }
 
 int testFastaParserFull(){
@@ -59,5 +65,7 @@ void testFastaParserTrivial(){
 int main(){
     cout << "TEST: Testing FastaParser\n";
     testFastaParserTrivial();
+    cout << "TEST: Testing AffineScorer\n";
+    testAffineScorer();
     //testFastaParserFull();
 }
