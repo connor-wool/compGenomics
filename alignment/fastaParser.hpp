@@ -16,34 +16,57 @@ class FastaParser{
     private:
         vector<GeneSequence> sequences;
         string filename;
-        int readFile();
 
     public:
         void setInputFile(string inputFile){
             this->filename = inputFile;
-            readFile();
         }
+
+        int readFile();
+
+        vector<GeneSequence> getSequences();
 };
+
+vector<GeneSequence> FastaParser::getSequences(){
+    
+    cout << "copying sequences\n";
+    cout << "internal sequence vector\n";
+    for (GeneSequence g : this->sequences)
+    {
+        cout << g.name << " : " << g.sequence << "\n";
+    }
+
+    vector<GeneSequence> temp;
+    temp = this->sequences;
+
+    cout << "copied sequence vector\n";
+    for (GeneSequence g : temp)
+    {
+        cout << g.name << " : " << g.sequence << "\n";
+    }
+    return temp;
+}
 
 int FastaParser::readFile(){
 
-    if(this->filename.empty() || this->filename == ""){
+    if(this->filename.empty()){
         cout << "Error parsing FASTA file, no filename provided.";
         return -1;
     }
 
     string line;
-    ifstream datafile;
-    GeneSequence *currentSequence;
-    datafile.open(this->filename);
+    ifstream inputStream;
+    GeneSequence *currentSequence = nullptr;
+    inputStream.open(this->filename, std::ifstream::in);
 
-    if(datafile.is_open()){
-        while(getline(datafile,line)){
-            
-            //This case is true if we're starting a new sequence
+    if (inputStream.is_open()){
+        while(getline(inputStream,line)){
+
+            if(line.empty()) { continue; }
+
+            //char '>' indicates start of new sequence
             if(line[0] == '>'){
 
-                //create a new sequence, get a reference, and add to the vector of sequences
                 GeneSequence newSequence = GeneSequence();
                 currentSequence = &newSequence;
                 this->sequences.push_back(newSequence);
@@ -51,12 +74,11 @@ int FastaParser::readFile(){
                 stringstream s = stringstream(line);
                 string sequenceID;
                 s >> sequenceID;
-                sequenceID.erase(0, 1); //remove the '>' character
-                cout << sequenceID;
-                currentSequence->name = sequenceID; //add this name to the GeneSequence object
+                sequenceID.erase(0, 1);         //removes the '>' character
+                currentSequence->name = sequenceID;
+                cout << "sequence name from GeneSequence object: `" << currentSequence->name << "`\n";
             }
 
-            //add the whole line to the current sequence
             else{
                 currentSequence->sequence.append(line);
             }
