@@ -1,14 +1,19 @@
+#pragma once
 
 #include <string>
 #include "suffixNode.h"
+using namespace std;
 
-class SuffixTree{
-    private:
-        SuffixNode *root;
-        void FindPath(SuffixNode *start, String s);
-        void NodeHops();
-    public:
-        SuffixTree();
-        void Construct(String input, String alphabet);
-        void DisplayChildren(SuffixNode *u);
-}
+class SuffixTree
+{
+  private:
+    SuffixNode *root;
+    void FindPath(SuffixNode *start, string s);
+    void NodeHops(SuffixNode *start, string s);
+    bool VerifyAlphabet(string input, string alphabet);
+
+  public:
+    SuffixTree();
+    void Construct(string input, string alphabet);
+    void DisplayChildren(SuffixNode *u);
+};
