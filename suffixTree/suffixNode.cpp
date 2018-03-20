@@ -3,6 +3,15 @@ Written by Connor Wool, Spring 2018 */
 
 #include "suffixNode.h"
 
+SuffixNode::SuffixNode()
+{
+    this->flags = 0;
+    this->id = -1;
+    this->parentEdgeLabel = "";
+    this->parent = nullptr;
+    this->suffixLink = nullptr;
+}
+
 SuffixNode::SuffixNode(int node_id)
 {
     this->flags = 0;
@@ -10,6 +19,14 @@ SuffixNode::SuffixNode(int node_id)
     this->parentEdgeLabel = "";
     this->parent = nullptr;
     this->suffixLink = nullptr;
+}
+
+SuffixNode::SuffixNode(int id, string edgeLabel, SuffixNode *parent, SuffixNode *child)
+{
+    this->id = id;
+    this->parentEdgeLabel = edgeLabel;
+    this->parent = parent;
+    this->children.push_back(child);
 }
 
 void SuffixNode::setParent(SuffixNode *p)
@@ -75,4 +92,50 @@ void SuffixNode::setLinkUnknown()
 bool SuffixNode::linkKnown()
 {
     return (this->flags & SN_LINK_KNOWN);
+}
+
+void SuffixNode::addChild(SuffixNode *n)
+{
+    char insertionChar = n->getEdgeLabel().at(0);
+    for (int i = 0; i < this->children.size(); i++)
+    {
+        char childChar = this->children[i]->getEdgeLabel().at(0);
+        if(insertionChar < childChar){
+            this->children.insert(children.begin() + i, n);
+            return;
+        }
+    }
+    this->children.push_back(n);
+}
+
+void SuffixNode::removeChild(SuffixNode *n){
+    for (int i = 0; i < this->children.size(); i++){
+        if(this->children[i] == n){
+            this->children.erase(this->children.begin() + i);
+            return;
+        }
+    }
+}
+
+vector<SuffixNode *> SuffixNode::getChildren()
+{
+    return this->children;
+}
+
+void SuffixNode::setSuffixLink(SuffixNode *n)
+{
+    this->suffixLink = n;
+}
+
+SuffixNode *SuffixNode::getSuffixLink()
+{
+    return this->suffixLink;
+}
+
+void SuffixNode::setId(int id){
+    this->id = id;
+}
+
+int SuffixNode::getId(){
+    return this->id;
 }
