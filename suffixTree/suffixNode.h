@@ -40,6 +40,8 @@ public:
   void addChild(SuffixNode *n);
   void removeChild(SuffixNode *n);
   vector<SuffixNode *> getChildren();
+  void printChildren();
+  void printNode();
 
   void setEdgeLabel(string label);
   string getEdgeLabel();
@@ -49,6 +51,9 @@ public:
 
   void setId(int id);
   int getId();
+
+  void setStringDepth(int depth);
+  int getStringDepth();
 
   //track status as root node
   void setAsRoot();

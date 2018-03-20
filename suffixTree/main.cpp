@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 
     //construct the tree
     st.Construct(inputString, alphabet);
-    
+    st.dfsTraverse();
+
     return 0;
 }

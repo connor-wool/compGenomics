@@ -10,6 +10,7 @@ SuffixNode::SuffixNode()
     this->parentEdgeLabel = "";
     this->parent = nullptr;
     this->suffixLink = nullptr;
+    this->setLinkUnknown();
 }
 
 SuffixNode::SuffixNode(int node_id)
@@ -100,7 +101,8 @@ void SuffixNode::addChild(SuffixNode *n)
     for (int i = 0; i < this->children.size(); i++)
     {
         char childChar = this->children[i]->getEdgeLabel().at(0);
-        if(insertionChar < childChar){
+        if (insertionChar < childChar)
+        {
             this->children.insert(children.begin() + i, n);
             return;
         }
@@ -108,9 +110,12 @@ void SuffixNode::addChild(SuffixNode *n)
     this->children.push_back(n);
 }
 
-void SuffixNode::removeChild(SuffixNode *n){
-    for (int i = 0; i < this->children.size(); i++){
-        if(this->children[i] == n){
+void SuffixNode::removeChild(SuffixNode *n)
+{
+    for (int i = 0; i < this->children.size(); i++)
+    {
+        if (this->children[i] == n)
+        {
             this->children.erase(this->children.begin() + i);
             return;
         }
@@ -132,10 +137,41 @@ SuffixNode *SuffixNode::getSuffixLink()
     return this->suffixLink;
 }
 
-void SuffixNode::setId(int id){
+void SuffixNode::setId(int id)
+{
     this->id = id;
 }
 
-int SuffixNode::getId(){
+int SuffixNode::getId()
+{
     return this->id;
+}
+
+void SuffixNode::printChildren()
+{
+    cout << "[";
+    for (auto nodePtr : this->children)
+    {
+        cout << " '" << nodePtr->getEdgeLabel() << "'";
+    }
+    cout << " ]";
+}
+
+void SuffixNode::printNode()
+{
+    cout << "{ ID:" << this->id;
+    cout << " | EL:'" << this->parentEdgeLabel << "'";
+    cout << " | D:" << this->stringDepth;
+    cout << " | Children: ";
+    printChildren();
+    cout << " }" << endl;
+}
+
+void SuffixNode::setStringDepth(int depth)
+{
+    this->stringDepth = depth;
+}
+int SuffixNode::getStringDepth()
+{
+    return this->stringDepth;
 }
