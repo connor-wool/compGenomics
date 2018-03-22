@@ -160,10 +160,18 @@ void SuffixNode::printChildren()
 void SuffixNode::printNode()
 {
     cout << "{ ID:" << this->id;
-    cout << " | EL:'" << this->parentEdgeLabel << "'";
+    cout << " | '" << this->parentEdgeLabel << "'";
     cout << " | D:" << this->stringDepth;
-    cout << " | Children: ";
-    printChildren();
+
+    if (this->isLeaf())
+    {
+        cout << "| Leaf";
+    }
+    else
+    {
+        cout << " | Children: ";
+        printChildren();
+    }
     cout << " }" << endl;
 }
 
@@ -174,4 +182,9 @@ void SuffixNode::setStringDepth(int depth)
 int SuffixNode::getStringDepth()
 {
     return this->stringDepth;
+}
+
+void SuffixNode::printDepth()
+{
+    cout << this->stringDepth << " ";
 }

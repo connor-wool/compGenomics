@@ -10,9 +10,9 @@ SuffixTree::SuffixTree()
 /* finds the path starting at the specified node argument that spells out the
 longest possible prefix of the specified string argument, and then insert
 the next suffix */
-SuffixNode* SuffixTree::FindPath(SuffixNode *start, string s, int suffixNumber)
+SuffixNode *SuffixTree::FindPath(SuffixNode *start, string s, int suffixNumber)
 {
-    cout << "FINDPATH" << endl;
+    //cout << "FINDPATH" << endl;
     /* First, we search the children of the current node, looking for a pathlabel
     starting with the same character as the suffix we want to insert */
     SuffixNode *nextHop = nullptr;
@@ -30,7 +30,7 @@ SuffixNode* SuffixTree::FindPath(SuffixNode *start, string s, int suffixNumber)
     to the new node in the children of the start node */
     if (nextHop == nullptr)
     {
-        cout << "FINDPATH: NEXTHOP=NULLPTR" << endl;
+        //cout << "FINDPATH: NEXTHOP=NULLPTR" << endl;
         SuffixNode *newChild = new SuffixNode();
         newChild->setAsLeaf();
         newChild->setEdgeLabel(s);
@@ -49,10 +49,10 @@ SuffixNode* SuffixTree::FindPath(SuffixNode *start, string s, int suffixNumber)
     or until we get to another node. */
     else
     {
-        cout << "FINDPATH: NEXTHOP=" << nextHop->getEdgeLabel() << endl;
+        //cout << "FINDPATH: NEXTHOP=" << nextHop->getEdgeLabel() << endl;
         string comparisonString = nextHop->getEdgeLabel();
-        cout << "FINDPATH: cmp string: " << comparisonString << endl;
-        cout << "FINDPATH: ins string: " << s << endl;
+        //cout << "FINDPATH: cmp string: " << comparisonString << endl;
+        //cout << "FINDPATH: ins string: " << s << endl;
         for (int i = 0; i < comparisonString.length(); i++)
         {
             //check for a point where the strings no longer match
@@ -71,11 +71,11 @@ SuffixNode* SuffixTree::FindPath(SuffixNode *start, string s, int suffixNumber)
                 string topHalfString = comparisonString.substr(0, i);
                 string bottomHalfString = comparisonString.substr(i);
                 string newLeafString = s.substr(i);
-                cout << "FINDPATH: comparison string " << comparisonString << endl;
-                cout << "FINDPATH: tophalf: " << topHalfString << endl;
-                cout << "FINDPATH: bottomhalf: " << bottomHalfString << endl;
-                cout << "FINDPATH: s string " << s << endl;
-                cout << "FINDPATH: newLeafString " << newLeafString << endl;
+                //cout << "FINDPATH: comparison string " << comparisonString << endl;
+                //cout << "FINDPATH: tophalf: " << topHalfString << endl;
+                //cout << "FINDPATH: bottomhalf: " << bottomHalfString << endl;
+                //cout << "FINDPATH: s string " << s << endl;
+                //cout << "FINDPATH: newLeafString " << newLeafString << endl;
 
                 /* Create the new internal parent node. */
                 SuffixNode *newInternalNode = new SuffixNode();
@@ -109,15 +109,17 @@ SuffixNode* SuffixTree::FindPath(SuffixNode *start, string s, int suffixNumber)
                 return newLeaf;
             }
         }
+        bool areEqual = (s.compare(comparisonString) == 0);
         return FindPath(nextHop, s.substr(comparisonString.length()), suffixNumber);
     }
 }
 
-SuffixNode* SuffixTree::NodeHops(SuffixNode *start, string beta)
+SuffixNode *SuffixTree::NodeHops(SuffixNode *start, string beta)
 {
     //do a thing? The thing? This thing?
 
-    if(beta.length() == 0){
+    if (beta.length() == 0)
+    {
         return start;
     }
 
@@ -132,18 +134,21 @@ SuffixNode* SuffixTree::NodeHops(SuffixNode *start, string beta)
     }
 
     /* if beta is exhausted by traveling to nextHop, just return nextHop */
-    if(beta.length() == nextHop->getEdgeLabel().length()){
+    if (beta.length() == nextHop->getEdgeLabel().length())
+    {
         return nextHop;
     }
 
     /* if beta is longer than the path to nextHop, recurse */
-    else if(beta.length() > nextHop->getEdgeLabel().length()){
+    else if (beta.length() > nextHop->getEdgeLabel().length())
+    {
         return NodeHops(nextHop, beta.substr(nextHop->getEdgeLabel().size()));
     }
 
     /* if beta ends in the middle of a path label, make a new internal node and
     return it */
-    else{
+    else
+    {
         string topHalf = nextHop->getEdgeLabel().substr(0, beta.length());
         string bottomHalf = nextHop->getEdgeLabel().substr(beta.length());
 
@@ -174,7 +179,7 @@ void SuffixTree::Construct(string input, string alphabet)
     //verify string is in alphabet
     if (VerifyAlphabet(input, alphabet))
     {
-        cout << "CONSTRUCT: Input string and alphabet verified" << endl;
+        //cout << "CONSTRUCT: Input string and alphabet verified" << endl;
     }
     else
     {
@@ -184,6 +189,8 @@ void SuffixTree::Construct(string input, string alphabet)
 
     //add $ to end of input string
     string master = input + "$";
+    this->sourceString = master;
+    this->sourceAlphabet = alphabet;
 
     //create a root node
     this->root = new SuffixNode();
@@ -203,33 +210,41 @@ void SuffixTree::Construct(string input, string alphabet)
     {
         //create a string to define the next suffix
         string nextSuffix = master.substr(loopControl);
-        cout << "CONSTRUCT: nextSuffix is `" << nextSuffix << "`" << endl;
+        //cout << "CONSTRUCT: nextSuffix is `" << nextSuffix << "`" << endl;
 
         //initialization, insert the first suffix into the tree
-        if(lastLeaf == nullptr){
+        if (lastLeaf == nullptr)
+        {
             lastLeaf = FindPath(this->root, nextSuffix, loopControl);
         }
+        //else if(nextSuffix.size() == 1){
+        //    lastLeaf = FindPath(this->root, nextSuffix, loopControl);
+        //}
         //case when suffix link is known for parent
-        else if(lastLeaf->getParent()->linkKnown()){
+        else if (lastLeaf->getParent()->linkKnown())
+        {
             //get parent node
             SuffixNode *u = lastLeaf->getParent();
             //if parent is root, insert starting at root (no savings)
-            if(u->isRoot()){
+            if (u->isRoot())
+            {
                 lastLeaf = FindPath(this->root, nextSuffix, loopControl);
             }
             //if parent is not root, follow suffix link and insert
-            else{
+            else
+            {
                 string toInsert = nextSuffix.substr(u->getStringDepth());
                 lastLeaf = FindPath(u->getSuffixLink(), toInsert, loopControl);
             }
         }
         //case when suffix link is not known for parent
-        else{
+        else
+        {
             //get grandparent node
             SuffixNode *uprime = lastLeaf->getParent()->getParent();
             SuffixNode *u = lastLeaf->getParent();
-            
-            if (uprime->isRoot())   //do root stuff
+
+            if (uprime->isRoot()) //do root stuff
             {
                 SuffixNode *vprime = uprime->getSuffixLink();
                 SuffixNode *v = NodeHops(vprime, u->getEdgeLabel().substr(1));
@@ -238,7 +253,8 @@ void SuffixTree::Construct(string input, string alphabet)
                 string toInsert = nextSuffix.substr(u->getEdgeLabel().size() - 1);
                 lastLeaf = FindPath(v, toInsert, loopControl);
             }
-            else{   //do not-root stuff
+            else
+            { //do not-root stuff
                 SuffixNode *vprime = uprime->getSuffixLink();
                 SuffixNode *v = NodeHops(vprime, u->getEdgeLabel());
                 u->setSuffixLink(v);
@@ -272,34 +288,114 @@ void SuffixTree::dfsTraverse()
     cout << "(" << this->number_leaf_nodes << " leaves, ";
     cout << this->number_internal_nodes << " internal)" << endl;
 
-    dfsTraverseHelper(this->root);
+    dfsTraverseHelper(this->root, 0);
+    cout << endl;
 }
 
-void SuffixTree::dfsTraverseHelper(SuffixNode *start)
+int SuffixTree::dfsTraverseHelper(SuffixNode *start, int lineCtl)
 {
     //print self, then children
-    start->printNode();
-    for(auto nodePtr : start->getChildren()){
-        dfsTraverseHelper(nodePtr);
+    start->printDepth();
+    if (lineCtl + 1 % 10 == 0)
+    {
+        cout << endl;
+    }
+    for (auto nodePtr : start->getChildren())
+    {
+        lineCtl = dfsTraverseHelper(nodePtr, lineCtl + 1);
+    }
+    return lineCtl;
+}
+
+void SuffixTree::renumberInternals()
+{
+    int startVal = this->number_leaf_nodes;
+    renumberInternalsHelper(root, startVal);
+}
+
+int SuffixTree::renumberInternalsHelper(SuffixNode *start, int value)
+{
+    int idVal = value;
+    if (start->isInternal())
+    {
+        start->setId(idVal);
+        idVal += 1;
+        for (auto nodePtr : start->getChildren())
+        {
+            idVal = renumberInternalsHelper(nodePtr, idVal);
+        }
+    }
+    return idVal;
+}
+
+void SuffixTree::BWT()
+{
+    cout << "BWT Index Print:" << endl;
+    BWTHelper(this->root, this->sourceString);
+    cout << endl;
+}
+
+void SuffixTree::BWTHelper(SuffixNode *start, string source)
+{
+    if (start->isLeaf() && start->getId() > 0)
+    {
+        cout << source[start->getId() - 1];
+    }
+    else if (start->getId() == 0)
+    {
+        cout << source.at(source.size() - 1);
+    }
+    else
+    {
+        for (auto nodePtr : start->getChildren())
+        {
+            BWTHelper(nodePtr, source);
+        }
     }
 }
 
-    void SuffixTree::renumberInternals(){
-        int startVal = this->number_leaf_nodes;
-        renumberInternalsHelper(root, startVal);
-    }
+void SuffixTree::PrintTreeStatistics()
+{
+    cout << "SUFFIX TREE STATS:" << endl;
+    cout << "Total Nodes: " << this->number_nodes << endl;
+    cout << "Leaf Nodes: " << this->number_leaf_nodes << endl;
+    cout << "Internal Nodes: " << this->number_internal_nodes << endl;
+    cout << "Size of tree (bytes): " << this->number_nodes * sizeof(SuffixNode) << endl;
+    //avg string depth, internal nodes
+    double avgDepth = (double)sumInternalNodeDepth(this->root) / (double)this->number_internal_nodes;
+    cout << "Avg Internal Node String Depth: " << avgDepth << endl;
+    //max string depth, internal nodes
+    cout << "Max Internal Node String Depth: " << findMaxInternalNodeDepth(this->root) << endl;
+}
 
-    int SuffixTree::renumberInternalsHelper(SuffixNode *start, int value)
+int SuffixTree::sumInternalNodeDepth(SuffixNode *start)
+{
+    int value = 0;
+    if (start->isInternal())
     {
-        int idVal = value;
-        if (start->isInternal())
+        for (auto nodePtr : start->getChildren())
         {
-            start->setId(idVal);
-            idVal += 1;
-            for(auto nodePtr : start->getChildren()){
-                idVal = renumberInternalsHelper(nodePtr, idVal);
+            value += sumInternalNodeDepth(nodePtr);
+        }
+        value += start->getStringDepth();
+    }
+    return value;
+}
+
+int SuffixTree::findMaxInternalNodeDepth(SuffixNode *start)
+{
+    int max = 0;
+    if (start->isInternal())
+    {
+        max = start->getStringDepth();
+        for (auto nodePtr : start->getChildren())
+        {
+            int childVal = findMaxInternalNodeDepth(nodePtr);
+            if (childVal > max)
+            {
+                max = childVal;
             }
         }
-        return idVal;
     }
-
+    return max;
+}

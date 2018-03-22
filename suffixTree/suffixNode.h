@@ -42,6 +42,7 @@ public:
   vector<SuffixNode *> getChildren();
   void printChildren();
   void printNode();
+  void printDepth();
 
   void setEdgeLabel(string label);
   string getEdgeLabel();

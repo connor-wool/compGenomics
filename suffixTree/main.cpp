@@ -11,19 +11,24 @@ int main(int argc, char *argv[])
     AlphabetParser ap;
 
     //read the fasta file
-    fp.setInputFile("s1.fas");
+    fp.setInputFile("inputFiles/s2.fas");
     fp.readFile();
     vector<GeneSequence> sequences = fp.getSequences();
     string inputString = sequences[0].sequence;
 
     //read the alphabet file
-    ap.setInputFile("English_alphabet.txt");
+    ap.setInputFile("inputFiles/English_alphabet.txt");
     ap.readFile();
     string alphabet = ap.getAlphabet();
 
     //construct the tree
     st.Construct(inputString, alphabet);
+    
+    st.PrintTreeStatistics();
+    //cout << "Suffix node size: " << sizeof(SuffixNode) << endl;
+
     st.dfsTraverse();
+    st.BWT();
 
     return 0;
 }
