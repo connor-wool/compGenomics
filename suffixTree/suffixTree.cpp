@@ -116,6 +116,11 @@ SuffixNode* SuffixTree::FindPath(SuffixNode *start, string s, int suffixNumber)
 SuffixNode* SuffixTree::NodeHops(SuffixNode *start, string beta)
 {
     //do a thing? The thing? This thing?
+
+    if(beta.length() == 0){
+        return start;
+    }
+
     SuffixNode *nextHop = nullptr;
     for (SuffixNode *child : start->getChildren())
     {
