@@ -373,9 +373,10 @@ void SuffixTree::PrintTreeStatistics()
 {
     cout << "SUFFIX TREE STATS:" << endl;
     int inputSizeBytes = this->sourceString.size();
-    cout << "Input size: " << inputSizeBytes << " bytes" << endl;
+    cout << "Size of input (bytes): " << inputSizeBytes << " bytes" << endl;
     int treeSizeBytes = this->number_nodes * sizeof(SuffixNode);
     cout << "Size of tree (bytes): " << treeSizeBytes << endl;
+    cout << "Size of each node (bytes): " << sizeof(SuffixNode) << endl;
     cout << "Ratio: " << ((double)treeSizeBytes / (double)inputSizeBytes) << endl;
     cout << "Total Nodes: " << this->number_nodes << endl;
     cout << "Leaf Nodes: " << this->number_leaf_nodes << endl;
