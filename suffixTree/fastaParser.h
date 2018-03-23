@@ -84,7 +84,7 @@ int FastaParser::readFile()
             {
                 this->sequences.push_back(GeneSequence());
                 index++;
-                stringstream s = stringstream(line.c_str());
+                stringstream s = stringstream(line);
                 string sequenceID;
                 s >> sequenceID;
                 sequenceID.erase(0, 1); //removes the '>' character
