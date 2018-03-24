@@ -1,0 +1,11 @@
+Construction took 0.0251186 seconds (AKA: 25118.6 microseconds)
+CONNOR WOOL'S SUFFIX TREE STATS:
+Internal Nodes: 2105
+Leaf Nodes: 3303
+Total Nodes: 5408
+Size of tree (bytes): 432640
+Avg Internal Node String Depth: 5.72067
+Max Internal Node String Depth: 18
+Longest repeated string: AAAATTAAAAATTAAAAA
+Length of repeated string: 18
+index of repeat: 1818 1811
