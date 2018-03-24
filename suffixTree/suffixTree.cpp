@@ -424,33 +424,43 @@ int SuffixTree::findMaxInternalNodeDepth(SuffixNode *start)
 }
 
 void SuffixTree::FindLongestMatchingRepeat(){
-    string longestRepeat = longestRepeatHelper(this->root);
-    cout << "Longest repeated string: " << longestRepeat << endl;
+    struct lrs longestRepeat;
+    longestRepeat = longestRepeatHelper(this->root);
+    cout << "Longest repeated string: " << longestRepeat.repeatString << endl;
+    cout << "Length of repeated string: " << longestRepeat.repeatString.length() << endl;
+    cout << "index of repeat: " << longestRepeat.index[0] << " " << longestRepeat.index[1] << endl;
 }
 
-string SuffixTree::longestRepeatHelper(SuffixNode *start){
+//searches all internal nodes, and returns the longest edge label of any internal node
+struct lrs SuffixTree::longestRepeatHelper(SuffixNode *node){
 
-    //stores the longest internal edge label we've seen so far
-    string longest;
+    //stores the longest internal edge label we've seen so far,
+    //along with the indexes of the children that create that edge
+    struct lrs results;
+    results.repeatString = ""; //set to empty string
 
-    //if we're a leaf, simply return empty string (no matches)
-    if (start->isLeaf())
+    //if we're a leaf, simply return with our own id
+    if (node->isLeaf())
     {
-        longest = "";
+        results.index.push_back(node->getId() + 1);
     }
 
     //if we're internal, query children for their longest match and compare to our own
     else{
-        longest = start->getEdgeLabel();
-        string childString;
-        for (auto nodePtr : start->getChildren())
+        for (auto childPtr : node->getChildren())
         {
-            childString = longestRepeatHelper(nodePtr);
-            if(childString.length() > longest.length()){
-                longest = childString;
+            struct lrs childResult = longestRepeatHelper(childPtr);
+            if(childPtr->isLeaf()){
+                for(auto n: childResult.index){
+                    results.index.push_back(n);
+                }
+            }
+            if(childResult.repeatString.length() > results.repeatString.length()){
+                results = childResult;
             }
         }
+        results.repeatString = node->getEdgeLabel() + results.repeatString;
     }
 
-    return longest;
+    return results;
 }

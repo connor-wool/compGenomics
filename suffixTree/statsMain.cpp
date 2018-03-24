@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     cout << "Construction took " << totalTime.count() << " seconds";
     cout << " (AKA: " << (totalTime.count() * 1000000.0) << " microseconds)" << endl;
     st.PrintTreeStatistics();
-    //st.FindLongestMatchingRepeat();
+    st.FindLongestMatchingRepeat();
 
     return 0;
 }
