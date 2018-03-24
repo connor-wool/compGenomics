@@ -23,6 +23,7 @@ class SuffixTree
     void BWTHelper(SuffixNode *start, string source);
     int sumInternalNodeDepth(SuffixNode *start);
     int findMaxInternalNodeDepth(SuffixNode *start);
+    string longestRepeatHelper(SuffixNode *start);
 
   public:
     SuffixTree();
@@ -31,4 +32,5 @@ class SuffixTree
     void dfsTraverse();
     void BWT();
     void PrintTreeStatistics();
+    void FindLongestMatchingRepeat();
 };

@@ -422,3 +422,35 @@ int SuffixTree::findMaxInternalNodeDepth(SuffixNode *start)
     }
     return max;
 }
+
+void SuffixTree::FindLongestMatchingRepeat(){
+    string longestRepeat = longestRepeatHelper(this->root);
+    cout << "Longest repeated string: " << longestRepeat << endl;
+}
+
+string SuffixTree::longestRepeatHelper(SuffixNode *start){
+
+    //stores the longest internal edge label we've seen so far
+    string longest;
+
+    //if we're a leaf, simply return empty string (no matches)
+    if (start->isLeaf())
+    {
+        longest = "";
+    }
+
+    //if we're internal, query children for their longest match and compare to our own
+    else{
+        longest = start->getEdgeLabel();
+        string childString;
+        for (auto nodePtr : start->getChildren())
+        {
+            childString = longestRepeatHelper(nodePtr);
+            if(childString.length() > longest.length()){
+                longest = childString;
+            }
+        }
+    }
+
+    return longest;
+}

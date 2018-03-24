@@ -2,8 +2,7 @@
 #include "suffixTree.h"
 #include "fastaParser.h"
 #include "alphabetParser.h"
-#include <sys/time.h>
-#include <string.h>
+#include <chrono>
 
 int main(int argc, char *argv[])
 {
@@ -38,21 +37,16 @@ int main(int argc, char *argv[])
     ap.readFile();
     string alphabet = ap.getAlphabet();
 
-    //construct the tree
-
-    struct timeval startConstruction, finishConstruction;
-    memset(&startConstruction, 0, sizeof(startConstruction));
-    memset(&finishConstruction, 0, sizeof(finishConstruction));
-
-    gettimeofday(&startConstruction, 0);
+    //time construction of the tree
+    auto start = std::chrono::high_resolution_clock::now();
     st.Construct(inputString, alphabet);
-    gettimeofday(&finishConstruction, 0);
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> totalTime = finish - start;
 
-    int totalTime = finishConstruction.tv_usec - startConstruction.tv_usec;
-
-    cout << "Construction took " << totalTime << " microseconds ";
-    cout << " (AKA: " << ((double)totalTime / 1000000.0) << " seconds)" << endl;
+    cout << "Construction took " << totalTime.count() << " seconds";
+    cout << " (AKA: " << (totalTime.count() * 1000000.0) << " microseconds)" << endl;
     st.PrintTreeStatistics();
+    //st.FindLongestMatchingRepeat();
 
     return 0;
 }
