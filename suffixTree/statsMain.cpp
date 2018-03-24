@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     //get the input file options from the commandline
     string inputFastaFile;
     string inputAlphabetFile;
+
     if (argc == 3)
     {
         inputFastaFile = argv[1];
@@ -48,13 +49,10 @@ int main(int argc, char *argv[])
     gettimeofday(&finishConstruction, 0);
 
     int totalTime = finishConstruction.tv_usec - startConstruction.tv_usec;
+
     cout << "Construction took " << totalTime << " microseconds ";
     cout << " (AKA: " << ((double)totalTime / 1000000.0) << " seconds)" << endl;
     st.PrintTreeStatistics();
-    //cout << "Suffix node size: " << sizeof(SuffixNode) << endl;
-
-    //st.dfsTraverse();
-    //st.BWT();
 
     return 0;
 }

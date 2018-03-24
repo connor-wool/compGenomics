@@ -371,21 +371,24 @@ void SuffixTree::BWTHelper(SuffixNode *start, string source)
 
 void SuffixTree::PrintTreeStatistics()
 {
-    cout << "SUFFIX TREE STATS:" << endl;
-    int inputSizeBytes = this->sourceString.size();
-    cout << "Size of input (bytes): " << inputSizeBytes << " bytes" << endl;
+    cout << "CONNOR WOOL'S SUFFIX TREE STATS:" << endl;
+    //project requested statistics, in order of request
+    cout << "Internal Nodes: " << this->number_internal_nodes << endl;
+    cout << "Leaf Nodes: " << this->number_leaf_nodes << endl;
+    cout << "Total Nodes: " << this->number_nodes << endl;
     int treeSizeBytes = this->number_nodes * sizeof(SuffixNode);
     cout << "Size of tree (bytes): " << treeSizeBytes << endl;
-    cout << "Size of each node (bytes): " << sizeof(SuffixNode) << endl;
-    cout << "Ratio: " << ((double)treeSizeBytes / (double)inputSizeBytes) << endl;
-    cout << "Total Nodes: " << this->number_nodes << endl;
-    cout << "Leaf Nodes: " << this->number_leaf_nodes << endl;
-    cout << "Internal Nodes: " << this->number_internal_nodes << endl;
     //avg string depth, internal nodes
     double avgDepth = (double)sumInternalNodeDepth(this->root) / (double)this->number_internal_nodes;
     cout << "Avg Internal Node String Depth: " << avgDepth << endl;
     //max string depth, internal nodes
     cout << "Max Internal Node String Depth: " << findMaxInternalNodeDepth(this->root) << endl;
+
+    //int inputSizeBytes = this->sourceString.size();
+    //cout << "Size of input (bytes): " << inputSizeBytes << " bytes" << endl;
+    //cout << "Size of each node (bytes): " << sizeof(SuffixNode) << endl;
+    //cout << "Ratio: " << ((double)treeSizeBytes / (double)inputSizeBytes) << endl;
+    //cout << "Total Nodes: " << this->number_nodes << endl;
 }
 
 int SuffixTree::sumInternalNodeDepth(SuffixNode *start)
