@@ -446,5 +446,6 @@ void AlignmentTable::retrace(int mode){
     }
 
     cout << "Printing final alignments\n";
+    cout << "Printing only s1, starting next line:" << endl;
     cout << "`" << this->s1_sequenced << "`\n";
 }

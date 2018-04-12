@@ -22,12 +22,10 @@ SuffixNode::SuffixNode(int node_id)
     this->suffixLink = nullptr;
 }
 
-SuffixNode::SuffixNode(int id, string edgeLabel, SuffixNode *parent, SuffixNode *child)
+SuffixNode::SuffixNode(int id, SuffixNode *parent)
 {
     this->id = id;
-    this->parentEdgeLabel = edgeLabel;
     this->parent = parent;
-    this->children.push_back(child);
 }
 
 void SuffixNode::setParent(SuffixNode *p)
@@ -179,6 +177,7 @@ void SuffixNode::setStringDepth(int depth)
 {
     this->stringDepth = depth;
 }
+
 int SuffixNode::getStringDepth()
 {
     return this->stringDepth;

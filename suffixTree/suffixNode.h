@@ -19,10 +19,17 @@ class SuffixNode
 {
 private:
   int id;
+
   SuffixNode *suffixLink;
   SuffixNode *parent;
+
   string parentEdgeLabel;
+
+  int startIndex;
+  int length;
+
   vector<SuffixNode *> children;
+
   int stringDepth;
   int flags;
 
@@ -31,7 +38,7 @@ public:
 
   SuffixNode(int id);
 
-  SuffixNode(int id, string edgeLabel, SuffixNode *parent, SuffixNode *child);
+  SuffixNode(int id, SuffixNode *parent);
 
   //manage parent info
   void setParent(SuffixNode *p);
