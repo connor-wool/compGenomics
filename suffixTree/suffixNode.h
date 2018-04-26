@@ -22,11 +22,10 @@ private:
 
   SuffixNode *suffixLink;
   SuffixNode *parent;
+  string *source;
 
-  string parentEdgeLabel;
-
-  int startIndex;
-  int length;
+  int el_startIndex;
+  int el_length;
 
   vector<SuffixNode *> children;
 
@@ -34,25 +33,27 @@ private:
   int flags;
 
 public:
-  SuffixNode();
+  //MARK: Constructors
+  SuffixNode(string *source);
+  SuffixNode(string *source, int id);
+  SuffixNode(string *source, int id, SuffixNode *parent);
 
-  SuffixNode(int id);
-
-  SuffixNode(int id, SuffixNode *parent);
-
-  //manage parent info
+  //MARK: manage parents and children
   void setParent(SuffixNode *p);
   SuffixNode *getParent();
-
   void addChild(SuffixNode *n);
   void removeChild(SuffixNode *n);
   vector<SuffixNode *> getChildren();
+
   void printChildren();
   void printNode();
   void printDepth();
 
-  void setEdgeLabel(string label);
+  //MARK: Manage Edge Label and index
+  void setEdgeLabel(int start, int length);
   string getEdgeLabel();
+  int getEdgeStart();
+  int getEdgeLength();
 
   void setSuffixLink(SuffixNode *n);
   SuffixNode *getSuffixLink();

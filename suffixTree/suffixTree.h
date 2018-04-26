@@ -21,8 +21,8 @@ private:
   string sourceString;
   string sourceAlphabet;
 
-  SuffixNode *FindPath(SuffixNode *start, string s, int suffixNumber);
-  SuffixNode *NodeHops(SuffixNode *start, string beta);
+  SuffixNode *FindPath(SuffixNode *start, int startIndex, int stringLength, int suffixNumber);
+  SuffixNode *NodeHops(SuffixNode *start, int startIndex, int stringLength);
   bool VerifyAlphabet(string input, string alphabet);
   int dfsTraverseHelper(SuffixNode *start, int lineCtl);
   void renumberInternals();
@@ -34,6 +34,7 @@ private:
 
 public:
   SuffixTree();
+  string SourceString();
   void Construct(string input, string alphabet);
   void DisplayChildren(SuffixNode *u);
   void dfsTraverse();

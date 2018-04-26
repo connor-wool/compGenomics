@@ -1,0 +1,3 @@
+#! /bin/bash
+
+g++ -g -std=c++11 suffixNode.cpp suffixTree.cpp main.cpp

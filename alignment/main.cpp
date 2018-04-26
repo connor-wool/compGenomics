@@ -8,8 +8,8 @@ Cpts 471, WSU, Spring 2018
 #include <string>
 #include <sstream>
 #include <stdlib.h>
-#include "alignmentTable.hpp"
-#include "affineScorer.hpp"
+#include "alignmentTable.h"
+//#include "affineScorer.hpp"
 
 using namespace std;
 

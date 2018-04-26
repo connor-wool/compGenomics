@@ -1,3 +1,3 @@
 #! /bin/bash
 
-g++ --std=c++11 -o alignment.run main.cpp
+g++ --std=c++11 -g fastaParser.cpp affineScorer.cpp alignmentTable.cpp main.cpp
