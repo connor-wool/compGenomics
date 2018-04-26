@@ -32,11 +32,13 @@ void SuffixNode::addChild(SuffixNode *n)
 {
     std::string nLabel = _source->substr(n->_edge.start, n->_edge.length);
     char nFirst = nLabel[0];
+    //char nFirst = _source[n->_edge.start];
     for (int i = 0; i < _children.size(); i++)
     {
-        SuffixNode *child = _children.at(i);
+        SuffixNode *child = _children[i];
         std::string cLabel = _source->substr(child->_edge.start, child->_edge.length);
         char cFirst = cLabel[0];
+        //char cFirst = *_source[child->_edge.start];
         if (nFirst < cFirst)
         {
             _children.insert(_children.begin() + i, n);
