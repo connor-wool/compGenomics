@@ -3,28 +3,29 @@ Written by Connor Wool, Spring 2018 */
 
 #include "suffixNode.h"
 
-SuffixNode::SuffixNode()
+SuffixNode::SuffixNode(string *source)
 {
     this->flags = 0;
     this->id = -1;
-    this->parentEdgeLabel = "";
+    this->source = source;
     this->parent = nullptr;
     this->suffixLink = nullptr;
     this->setLinkUnknown();
 }
 
-SuffixNode::SuffixNode(int node_id)
+SuffixNode::SuffixNode(string *source, int node_id)
 {
     this->flags = 0;
     this->id = node_id;
-    this->parentEdgeLabel = "";
+    this->source = source;
     this->parent = nullptr;
     this->suffixLink = nullptr;
 }
 
-SuffixNode::SuffixNode(int id, SuffixNode *parent)
+SuffixNode::SuffixNode(string *source, int id, SuffixNode *parent)
 {
     this->id = id;
+    this->source = source;
     this->parent = parent;
 }
 
@@ -38,14 +39,16 @@ SuffixNode *SuffixNode::getParent()
     return this->parent;
 }
 
-void SuffixNode::setEdgeLabel(string label)
+void SuffixNode::setEdgeLabel(int start, int length)
 {
-    this->parentEdgeLabel = label;
+    this->el_startIndex = start;
+    this->el_length = length;
 }
 
 string SuffixNode::getEdgeLabel()
 {
-    return this->parentEdgeLabel;
+    string temp = this->source->substr(this->el_startIndex, this->el_length);
+    return temp;
 }
 
 void SuffixNode::setAsRoot()
@@ -158,7 +161,7 @@ void SuffixNode::printChildren()
 void SuffixNode::printNode()
 {
     cout << "{ ID:" << this->id;
-    cout << " | '" << this->parentEdgeLabel << "'";
+    cout << " | '" << this->getEdgeLabel() << "'";
     cout << " | D:" << this->stringDepth;
 
     if (this->isLeaf())
@@ -186,4 +189,14 @@ int SuffixNode::getStringDepth()
 void SuffixNode::printDepth()
 {
     cout << this->stringDepth << " ";
+}
+
+int SuffixNode::getEdgeStart()
+{
+    return this->el_startIndex;
+}
+
+int SuffixNode::getEdgeLength()
+{
+    return this->el_length;
 }

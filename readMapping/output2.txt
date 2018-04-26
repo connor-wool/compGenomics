@@ -1,0 +1,5 @@
+Read in reference sequence of size [1199940]
+Got 1 reads from file
+Constructing Suffix Tree
+0 of 1199941
+10000 of 1199941
