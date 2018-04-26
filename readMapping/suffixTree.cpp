@@ -213,11 +213,12 @@ void SuffixTree::Construct(string input, string alphabet)
 
     int finalIndex = _source.length();
 
+    cout << "Constructing Suffix Tree" << endl;
     for (int startIndex = 0; startIndex < _source.length(); startIndex++)
     {
-        //dfsTraverse();
-        cout << startIndex << " of " << finalIndex << endl;
-
+        if(startIndex % 10000 == 0){
+            cout << startIndex << " of " << finalIndex << endl;;
+        }
         //determine index for next insertion
         int suffixNumber = startIndex;
         string nextSuffix = _source.substr(startIndex);
@@ -297,42 +298,53 @@ bool SuffixTree::verifyAlphabet(string input, string alphabet)
     return true;
 }
 
-void SuffixTree::renumberInternals(){
+void SuffixTree::renumberInternals()
+{
     int startVal = _numLeaves;
     renumberInternalsHelper(_root, startVal);
 }
 
-int SuffixTree::renumberInternalsHelper(SuffixNode *n, int value){
+int SuffixTree::renumberInternalsHelper(SuffixNode *n, int value)
+{
     int idVal = value;
-    if(n->isInternal()){
+    if (n->isInternal())
+    {
         n->ID(idVal);
         idVal += 1;
-        for(auto nodeptr : n->getChildren()){
+        for (auto nodeptr : n->getChildren())
+        {
             idVal = renumberInternalsHelper(nodeptr, idVal);
         }
     }
     return idVal;
 }
 
-void SuffixTree::BWT(){
+void SuffixTree::BWT()
+{
     bwtHelper(_root, &_source);
 }
 
-void SuffixTree::bwtHelper(SuffixNode *n, string *source){
-    if(n->ID() == 0 && n->isLeaf()){
-        cout << source->at(source->length() -1) << endl;
+void SuffixTree::bwtHelper(SuffixNode *n, string *source)
+{
+    if (n->ID() == 0 && n->isLeaf())
+    {
+        cout << source->at(source->length() - 1) << endl;
     }
-    else if(n->isLeaf()){
+    else if (n->isLeaf())
+    {
         cout << source->at(n->ID() - 1) << endl;
     }
-    else{
-        for (auto nodeptr : n->getChildren()){
+    else
+    {
+        for (auto nodeptr : n->getChildren())
+        {
             bwtHelper(nodeptr, source);
         }
     }
 }
 
-void SuffixTree::PrintTreeStatistics(){
+void SuffixTree::PrintTreeStatistics()
+{
     cout << "Connor Wool's Suffix Tree Stats:" << endl;
     cout << "Internal Nodes: " << _numInternal << endl;
     cout << "Leaf Nodes: " << _numLeaves << endl;
@@ -342,22 +354,139 @@ void SuffixTree::PrintTreeStatistics(){
     cout << "Size of node (bytes): " << sizeof(SuffixNode) << endl;
 }
 
-void SuffixTree::dfsTraverse(){
+void SuffixTree::dfsTraverse()
+{
     cout << "Traverse" << endl;
     dfsTraverseHelper(_root);
     cout << "------------Finished" << endl;
-
 }
 
-int SuffixTree::dfsTraverseHelper(SuffixNode *n){
+int SuffixTree::dfsTraverseHelper(SuffixNode *n)
+{
     cout << "(" << n->ID() << ") " << "[" << n << "] ";
     cout << "(" << n->getLabel().start << "," << n->getLabel().length << ") --> ";
-    for(auto childptr : n->getChildren()){
+    for (auto childptr : n->getChildren())
+    {
         cout << "[" << childptr << "](" << childptr->getLabel().start << ",";
         cout << childptr->getLabel().length << ") ";
     }
     cout << endl;
-    for(auto childptr : n->getChildren()){
+    for (auto childptr : n->getChildren())
+    {
         dfsTraverseHelper(childptr);
     }
+}
+
+void SuffixTree::PrepareST()
+{
+    //_A = (int *)malloc(sizeof(int) * _source.length());
+    //_A_size = _source.length();
+    _nextIndex = 0;
+    PrepareSTRecursive(_root);
+}
+
+void SuffixTree::PrepareSTRecursive(SuffixNode *n)
+{
+    if (n == nullptr)
+    {
+        return;
+    }
+    if (n->isLeaf())
+    {
+        _A.push_back(n->ID());
+        if (n->depth() >= _x)
+        {
+            n->_start_leaf_index = _nextIndex;
+            n->_end_leaf_index = _nextIndex;
+        }
+        _nextIndex++;
+        return;
+    }
+    if (n->isInternal())
+    {
+        for (auto c : n->getChildren())
+        {
+            PrepareSTRecursive(c);
+        }
+        if (n->depth() >= _x)
+        {
+            SuffixNode *uleft = n->getChildren().at(0);
+            SuffixNode *uright = n->getChildren().back();
+            n->_start_leaf_index = uleft->_start_leaf_index;
+            n->_end_leaf_index = uright->_end_leaf_index;
+        }
+    }
+}
+
+vector<int> SuffixTree::FindLoc(string read)
+{
+    SuffixNode *T = _root;
+    SuffixNode *next = nullptr;
+    SuffixNode *u = nullptr;
+    int read_ptr = 0;
+
+    //track deepest node visited
+    int deepestDepth = 0;
+    SuffixNode *deepestNode = nullptr;
+
+label_restart_while:
+    while (read_ptr < read.length())
+    {
+        //cout << "depth: " << T->depth() << endl;
+        next = nullptr;
+
+        for (SuffixNode *child : T->getChildren())
+        {
+            if (child->label().at(0) == read[read_ptr])
+            {
+                next = child;
+                break;
+            }
+        }
+
+        if (next == nullptr)
+        {
+            //cout << "findloc: next is nullptr, mismatch case A" << endl;
+            u = T;
+            if (u->depth() > deepestDepth && u->depth() >= _x)
+            {
+                deepestDepth = u->depth();
+                deepestNode = u;
+            }
+            T = u->getSL();
+            goto label_restart_while;
+        }
+
+        string comp = next->label();
+
+        for (int i = 0; i < comp.length(); i++)
+        {
+            if (read[read_ptr] != comp[i])
+            {
+                read_ptr -= i;
+                u = T;
+                if (u->depth() > deepestDepth && u->depth() >= _x)
+                {
+                    deepestDepth = u->depth();
+                    deepestNode = u;
+                }
+                T = u->getSL();
+                goto label_restart_while;
+            }
+            read_ptr++;
+        }
+        T = next;
+    }
+
+    vector<int> results;
+    if (deepestNode != nullptr)
+    {
+        //cout << "deepest node not null!" << endl;
+        //cout << "deepest node start: " << deepestNode->_start_leaf_index << " end: " << deepestNode->_end_leaf_index << endl;
+        for (int i = deepestNode->_start_leaf_index; i <= deepestNode->_end_leaf_index; i++)
+        {
+            results.push_back(_A[i]);
+        }
+    }
+    return results;
 }

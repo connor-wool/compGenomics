@@ -1,5 +1,14 @@
 #include "alignmentTable.h"
 
+void AlignmentTable::localAlign(string s1, string s2, int *matches, int *alignLen){
+    setSequences(s1, s2);
+    initTable();
+    fillTableLocal();
+    localAlign();
+    *matches = retraceLocal();
+    *alignLen = _s1Seq.length();
+}
+
 int AlignmentTable::selectMax(int a, int b, int c)
 {
     int max = a;
@@ -35,6 +44,7 @@ void AlignmentTable::setSequences(string s1, string s2)
 
 void AlignmentTable::initTable()
 {
+    _cellTable.clear();
     for (int y = 0; y < _numRows; y++)
     {
         vector<tableCell> thisRow;
@@ -48,9 +58,9 @@ void AlignmentTable::initTable()
         }
         _cellTable.push_back(thisRow);
     }
-    cout << "created table: ";
-    cout << _cellTable.size() << " rows, ";
-    cout << _cellTable[0].size() << " cols" << endl;
+    //cout << "created table: ";
+    //cout << _cellTable.size() << " rows, ";
+    //cout << _cellTable[0].size() << " cols" << endl;
 }
 
 void AlignmentTable::fillTableGlobal()
@@ -226,7 +236,7 @@ void AlignmentTable::localAlign()
             scoreCell(x,y,1);
         }
     }
-    retraceLocal();
+    //retraceLocal();
 }
 
 void AlignmentTable::retraceGlobal(){
@@ -296,8 +306,9 @@ void AlignmentTable::retraceGlobal(){
     }
 }
 
-void AlignmentTable::retraceLocal(){
+int AlignmentTable::retraceLocal(){
 
+    int numMatches = 0;
     int xmax = -1;
     int ymax = -1;
     int valMax = NEGATIVE_INF;
@@ -313,7 +324,7 @@ void AlignmentTable::retraceLocal(){
         }
     }
 
-    cout << "xmax " << xmax << " ymax " << ymax << endl;
+    //cout << "xmax " << xmax << " ymax " << ymax << endl;
 
     _s1Seq = "";
     _s2Seq = "";
@@ -353,6 +364,7 @@ void AlignmentTable::retraceLocal(){
             _s2Seq = _s2[y-1] + _s2Seq;
             if(_s1[x-1] == _s2[y-1]){
                 _middleString = "|" + _middleString;
+                numMatches++;
             }
             else{
                 _middleString = " " + _middleString;
@@ -363,6 +375,7 @@ void AlignmentTable::retraceLocal(){
 
         current = &_cellTable[y][x];
     }
+    return numMatches;
 }
 
 vector<string> AlignmentTable::getAlignments()

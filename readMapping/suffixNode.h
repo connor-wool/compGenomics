@@ -14,7 +14,7 @@ Written by Connor Wool, April 2018
 
 class SuffixNode
 {
-private:
+public:
   int _id;
 
   SuffixNode *_suffixLink;
@@ -36,7 +36,6 @@ private:
   int _start_leaf_index;
   int _end_leaf_index;
 
-public:
   //constructor
   SuffixNode(std::string *source);
 

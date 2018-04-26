@@ -26,6 +26,14 @@ class SuffixTree{
     int _numInternal;
     string _source;
     string _alphabet;
+    int _x = 25;
+    vector<int> _A;
+    //int _A_size = 0;
+    int _nextIndex = 0;
+
+    SuffixNode *_fl_deepest;
+    int _fl_maxDepth;
+    int _fl_read_ptr;
 
     SuffixNode *findPath(SuffixNode *n, SP section, int suffixNumber);
     SuffixNode *nodeHops(SuffixNode *n, SP section);
@@ -47,4 +55,9 @@ class SuffixTree{
     void BWT();
     void PrintTreeStatistics();
     void FindLongestMatchingRepeat();
+    void PrepareST();
+    void PrepareSTRecursive(SuffixNode *n);
+    //void FindLoc(string read, SuffixNode *n);
+    vector<int> FindLoc(string read);
+
 };

@@ -44,7 +44,7 @@ class AlignmentTable{
     void fillTableLocal();
 
     void retraceGlobal();
-    void retraceLocal();
+    int retraceLocal();
 
   public:
     
@@ -52,6 +52,7 @@ class AlignmentTable{
     void setScores(int match, int mismatch, int h, int g);
     void globalAlign();
     void localAlign();
+    void localAlign(string s1, string s2, int *matches, int *alignLen);
     vector<string> getAlignments();
     void printTable();
     void printSequences();
