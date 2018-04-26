@@ -225,10 +225,13 @@ void SuffixTree::Construct(string input, string alphabet)
         }
         //determine index for next insertion
         int suffixNumber = startIndex;
-        string nextSuffix = _source.substr(startIndex);
+        //string nextSuffix = _source.substr(startIndex);
         SP nextSection;
         nextSection.start = startIndex;
-        nextSection.length = nextSuffix.length();
+        nextSection.length = finalIndex - startIndex;
+        //nextSection.length = nextSuffix.length();
+
+        //cout << finalIndex - startIndex << " " << nextSuffix.length() << endl;
 
         //base case to insert first leaf into tree
         if (lastLeaf == nullptr)
