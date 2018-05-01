@@ -10,7 +10,7 @@
 #include <chrono>
 #include <fstream>
 
-#define VERBOSE_OUTPUT 1
+#define VERBOSE_OUTPUT 0
 
 using namespace std;
 using namespace std::chrono;
@@ -66,6 +66,7 @@ int main(int argc, char *argv[]){
     cout << "Construction complete: " << durationMs.count() << " milliseconds ";
     auto durationSec = duration_cast<seconds>(constructionEnd - constructionStart);
     cout << "(" << durationSec.count() << " seconds)" << endl;
+    tree.PrintTreeStatistics();
 
     // (2) Prepare Suffix Tree
     cout << "Preparing Suffix Tree for mapping reads" << endl;

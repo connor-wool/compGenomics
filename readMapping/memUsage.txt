@@ -1,0 +1,47 @@
+top - 15:44:55 up  8:43,  1 user,  load average: 0.30, 0.22, 0.69
+Tasks: 113 total,   2 running, 111 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 18.8 us, 16.1 sy,  0.0 ni, 65.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  4039980 total,   879304 free,  1613172 used,  1547504 buff/cache
+KiB Swap:  4192252 total,  4192252 free,        0 used.  2141368 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+11447 connor    20   0 1311940 1.221g   2840 R 75.0 31.7   0:12.39 map
+ 9770 connor    20   0  752524 109376  10124 S  0.0  2.7   7:06.09 Microsoft.VSCod
+  855 root      20   0  358472  63460  30996 S  6.2  1.6   6:37.91 Xorg
+ 1500 connor    20   0  256808  51360  12272 S  0.0  1.3   0:14.56 awesome
+10546 connor    20   0  625304  41292   6876 S  0.0  1.0   0:01.00 Microsoft.VSCod
+ 6383 connor    20   0  572016  40400  27664 S 12.5  1.0   4:41.95 gnome-terminal-
+  689 root      20   0  214772  22840  14884 S  0.0  0.6   0:00.45 snapd
+  704 root      20   0  449320  16232  13576 S  0.0  0.4   0:00.20 NetworkManager
+---------------------------------------
+top - 15:45:39 up  8:44,  1 user,  load average: 0.67, 0.33, 0.70
+Tasks: 114 total,   2 running, 112 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 18.9 us, 16.1 sy,  0.0 ni, 64.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  4039980 total,   875088 free,  1613276 used,  1551616 buff/cache
+KiB Swap:  4192252 total,  4192252 free,        0 used.  2141288 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+11447 connor    20   0 1311940 1.221g   2840 R 75.0 31.7   0:46.77 map
+ 9770 connor    20   0  752524 109376  10124 S  0.0  2.7   7:06.09 Microsoft.VSCod
+  855 root      20   0  358472  63460  30996 S  0.0  1.6   6:39.79 Xorg
+ 1500 connor    20   0  256808  51360  12272 S  0.0  1.3   0:14.60 awesome
+10546 connor    20   0  625304  41292   6876 S  0.0  1.0   0:01.00 Microsoft.VSCod
+ 6383 connor    20   0  572016  40588  27728 S 12.5  1.0   4:48.68 gnome-terminal-
+  689 root      20   0  214772  22840  14884 S  0.0  0.6   0:00.45 snapd
+  704 root      20   0  449320  16232  13576 S  0.0  0.4   0:00.20 NetworkManager
+---------------------------------------
+top - 15:46:13 up  8:44,  1 user,  load average: 0.80, 0.40, 0.72
+Tasks: 114 total,   2 running, 112 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 18.9 us, 16.1 sy,  0.0 ni, 64.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  4039980 total,   871988 free,  1613140 used,  1554852 buff/cache
+KiB Swap:  4192252 total,  4192252 free,        0 used.  2141392 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+11447 connor    20   0 1311940 1.221g   2840 R 75.0 31.7   1:13.46 map
+ 9770 connor    20   0  752524 109376  10124 S  0.0  2.7   7:06.09 Microsoft.VSCod
+  855 root      20   0  358472  63460  30996 S  6.2  1.6   6:41.20 Xorg
+ 1500 connor    20   0  256808  51360  12272 S  0.0  1.3   0:14.61 awesome
+10546 connor    20   0  625304  41292   6876 S  0.0  1.0   0:01.00 Microsoft.VSCod
+ 6383 connor    20   0  572016  40588  27728 S 12.5  1.0   4:53.83 gnome-terminal-
+  689 root      20   0  214772  22840  14884 S  0.0  0.6   0:00.45 snapd
+  704 root      20   0  449320  16232  13576 S  0.0  0.4   0:00.20 NetworkManager
