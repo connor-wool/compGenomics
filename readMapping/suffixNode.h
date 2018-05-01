@@ -10,9 +10,6 @@ Written by Connor Wool, April 2018
 #include <string>
 #include <iostream>
 
-//depreciated, moved to this file
-//#include "stringPoint.h"
-
 typedef struct StringPoint{
     int start;
     int length;
@@ -36,7 +33,6 @@ public:
 
   //constructor
   SuffixNode(std::string *source);
-  //SuffixNode();
   
   //parent management
   void setParent(SuffixNode *p);
@@ -50,7 +46,6 @@ public:
   //edge label management
   void setLabel(int start, int length);
   SP getLabel();
-  
   void trimLabelFront(int howMuch);
   void trimLabelBack(int howMuch);
   
@@ -81,5 +76,4 @@ public:
   bool isLeaf();
 
   std::string label();
-  
 };
