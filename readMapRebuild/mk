@@ -1,0 +1,4 @@
+#! /bin/bash
+
+rm a.out
+g++ -ggdb suffixNode.cpp suffixTree.cpp driver.cpp
