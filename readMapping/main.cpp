@@ -10,6 +10,8 @@
 #include <chrono>
 #include <fstream>
 
+#define VERBOSE_OUTPUT 0
+
 using namespace std;
 using namespace std::chrono;
 
@@ -66,6 +68,7 @@ int main(int argc, char *argv[]){
     cout << "(" << durationSec.count() << " seconds)" << endl;
 
     // (2) Prepare Suffix Tree
+    cout << "Preparing Suffix Tree for mapping reads" << endl;
     auto prepareStart = chrono::high_resolution_clock::now();
     tree.PrepareST();
     auto prepareEnd = chrono::high_resolution_clock::now();
@@ -75,6 +78,7 @@ int main(int argc, char *argv[]){
     cout << "(" << durationSec.count() << " seconds)" << endl;
 
     // (3) Map Reads
+    cout << "Mapping reads to reference genome" << endl;
     AlignmentTable atable;
     atable.setScores(1, -2, -5, -1);
 
@@ -94,7 +98,7 @@ int main(int argc, char *argv[]){
             if(lowerBound < 0){
                 lowerBound = 0;
             }
-            int subsequencelength = 2 * g.sequence.length();
+            int subsequencelength = 3 * g.sequence.length();
             string referenceSubstring = refSeqVec[0].sequence.substr(lowerBound, subsequencelength);
             int matches = 0;
             int length = 0;
@@ -111,11 +115,17 @@ int main(int argc, char *argv[]){
             }
         }
         if(LengthCoverage == 0){
-            cout << g.name << " No hit found" << endl;
+            if(VERBOSE_OUTPUT){
+                cout << g.name << " No hit found ";
+                cout << "(" << positions.size() << " pos.)" << endl;
+            }
             outputFile << g.name << " No hit found" << endl;
         }
         else{
-            cout << g.name << " " << maxHitStart << " " << maxHitEnd << endl;
+            if(VERBOSE_OUTPUT){
+                cout << g.name << "\t" << maxHitStart << " " << maxHitEnd;
+                cout << "\t(" << positions.size() << " pos.)" << endl;
+            }
             outputFile << g.name << " " << maxHitStart << " " << maxHitEnd << endl;
         }
     }
@@ -127,5 +137,11 @@ int main(int argc, char *argv[]){
 
     cout << "Performed " << totalAlignments << " alignments on " << readSeqVec.size() << " reads." << endl;
     cout << "Average: " << ((double)totalAlignments / (double)readSeqVec.size()) << " alignments per read" << endl;
+
+    durationMs = duration_cast<milliseconds>(mapEnd - constructionStart);
+    cout << "Program complete: " << durationMs.count() << " milliseconds ";
+    durationSec = duration_cast<seconds>(mapEnd - constructionStart);
+    cout << "(" << durationSec.count() << " seconds)" << endl;
+
     outputFile.close();
 }

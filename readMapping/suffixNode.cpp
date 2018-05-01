@@ -11,8 +11,9 @@ SuffixNode::SuffixNode(std::string *source)
     _edge.start = -1;
     _edge.length = -1;
     _stringDepth = -1;
-    _isInternal = true;
+    _isInternal = false;
     _isRoot = false;
+    _isLeaf = false;
     _start_leaf_index = -1;
     _end_leaf_index = -1;
 }
@@ -30,14 +31,14 @@ SuffixNode *SuffixNode::getParent()
 //add a child to the current node, in alpha order
 void SuffixNode::addChild(SuffixNode *n)
 {
-    std::string nLabel = _source->substr(n->_edge.start, n->_edge.length);
-    char nFirst = nLabel[0];
+    //std::string nLabel = _source->substr(n->_edge.start, n->_edge.length);
+    char nFirst = (*_source)[_edge.start];
     //char nFirst = _source[n->_edge.start];
     for (int i = 0; i < _children.size(); i++)
     {
         SuffixNode *child = _children[i];
-        std::string cLabel = _source->substr(child->_edge.start, child->_edge.length);
-        char cFirst = cLabel[0];
+        //std::string cLabel = _source->substr(child->_edge.start, child->_edge.length);
+        char cFirst = (*_source)[child->_edge.start];
         //char cFirst = *_source[child->_edge.start];
         if (nFirst < cFirst)
         {

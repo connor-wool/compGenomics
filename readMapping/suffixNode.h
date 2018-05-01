@@ -16,29 +16,22 @@ class SuffixNode
 {
 public:
   int _id;
-
-  SuffixNode *_suffixLink;
-  SuffixNode *_parent;
-
-  std::string *_source;
-
+  SuffixNode* _suffixLink;
+  SuffixNode* _parent;
+  std::string* _source;
   SP _edge;
-  //int _edgeStartIndex;
-  //int _edgeLength;
   int _stringDepth;
-
   std::vector<SuffixNode *> _children;
-  //SuffixNode *_children;
-
   bool _isInternal;
   bool _isRoot;
-
+  bool _isLeaf;
   int _start_leaf_index;
   int _end_leaf_index;
 
   //constructor
   SuffixNode(std::string *source);
-
+  //SuffixNode();
+  
   //parent management
   void setParent(SuffixNode *p);
   SuffixNode *getParent();
@@ -51,9 +44,10 @@ public:
   //edge label management
   void setLabel(int start, int length);
   SP getLabel();
+  
   void trimLabelFront(int howMuch);
   void trimLabelBack(int howMuch);
-
+  
   //suffixLink management
   void
   setSL(SuffixNode *n);
@@ -81,4 +75,5 @@ public:
   bool isLeaf();
 
   std::string label();
+  
 };
