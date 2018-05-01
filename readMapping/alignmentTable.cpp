@@ -1,6 +1,6 @@
 #include "alignmentTable.h"
 
-void AlignmentTable::localAlign(string s1, string s2, int *matches, int *alignLen){
+void AlignmentTable::localAlign(string *s1, string *s2, int *matches, int *alignLen){
     setSequences(s1, s2);
     initTable();
     fillTableLocal();
@@ -31,14 +31,14 @@ void AlignmentTable::setScores(int match, int mismatch, int h, int g)
     _score_g = g;
 }
 
-void AlignmentTable::setSequences(string s1, string s2)
+void AlignmentTable::setSequences(string *s1, string *s2)
 {
     //set sequence strings
     _s1 = s1;
     _s2 = s2;
     //set size of table, leaving room for empty first row/col
-    _numRows = _s2.length() + 1;
-    _numCols = _s1.length() + 1;
+    _numRows = (*_s2).length() + 1;
+    _numCols = (*_s1).length() + 1;
     initTable();
 }
 
@@ -205,7 +205,7 @@ int AlignmentTable::scoreSub(int x, int y)
 
     int max = selectMax(compare->sub, compare->del, compare->ins);
 
-    if (_s1[x] == _s2[y])
+    if ((*_s1)[x] == (*_s2)[y])
     {
         return max + _score_match;
     }
@@ -263,22 +263,22 @@ void AlignmentTable::retraceGlobal(){
         
         if(insMax == max){
             _s1Seq = "-" + _s1Seq;
-            _s2Seq = _s2[y-1] + _s2Seq;
+            _s2Seq = (*_s2)[y-1] + _s2Seq;
             _middleString = " " + _middleString;
             y--;
         }
 
         else if(delMax == max){
-            _s1Seq = _s1[x-1] + _s1Seq;
+            _s1Seq = (*_s1)[x-1] + _s1Seq;
             _s2Seq = "-" + _s2Seq;
             _middleString = " " + _middleString;
             x--;
         }
 
         else if(subMax == max){
-            _s1Seq = _s1[x-1] + _s1Seq;
-            _s2Seq = _s2[y-1] + _s2Seq;
-            if(_s1[x-1] == _s2[y-1]){
+            _s1Seq = (*_s1)[x-1] + _s1Seq;
+            _s2Seq = (*_s2)[y-1] + _s2Seq;
+            if((*_s1)[x-1] == (*_s2)[y-1]){
                 _middleString = "|" + _middleString;
             }
             else{
@@ -292,7 +292,7 @@ void AlignmentTable::retraceGlobal(){
     }
 
     while(x > 0){
-        _s1Seq = _s1[x-1] + _s1Seq;
+        _s1Seq = (*_s1)[x-1] + _s1Seq;
         _s2Seq = "-" + _s2Seq;
         _middleString = " " + _middleString;
         x--;
@@ -300,7 +300,7 @@ void AlignmentTable::retraceGlobal(){
 
     while(y > 0){
         _s1Seq = "-" + _s1Seq;
-        _s2Seq = _s2[y-1] + _s2Seq;
+        _s2Seq = (*_s2)[y-1] + _s2Seq;
         _middleString = " " + _middleString;
         y--;
     }
@@ -347,22 +347,22 @@ int AlignmentTable::retraceLocal(){
         
         if(insMax == max){
             _s1Seq = "-" + _s1Seq;
-            _s2Seq = _s2[y-1] + _s2Seq;
+            _s2Seq = (*_s2)[y-1] + _s2Seq;
             _middleString = " " + _middleString;
             y--;
         }
 
         else if(delMax == max){
-            _s1Seq = _s1[x-1] + _s1Seq;
+            _s1Seq = (*_s1)[x-1] + _s1Seq;
             _s2Seq = "-" + _s2Seq;
             _middleString = " " + _middleString;
             x--;
         }
 
         else if(subMax == max){
-            _s1Seq = _s1[x-1] + _s1Seq;
-            _s2Seq = _s2[y-1] + _s2Seq;
-            if(_s1[x-1] == _s2[y-1]){
+            _s1Seq = (*_s1)[x-1] + _s1Seq;
+            _s2Seq = (*_s2)[y-1] + _s2Seq;
+            if((*_s1)[x-1] == (*_s2)[y-1]){
                 _middleString = "|" + _middleString;
                 numMatches++;
             }

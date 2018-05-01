@@ -7,6 +7,8 @@ Written by Connor Wool, April 2018
 #pragma once
 
 #include <string>
+#include <iostream>
+#include <vector>
 
 #include "suffixNode.h"
 
@@ -28,7 +30,6 @@ class SuffixTree{
     string _alphabet;
     int _x = 25;
     vector<int> _A;
-    //int _A_size = 0;
     int _nextIndex = 0;
 
     SuffixNode *_fl_deepest;

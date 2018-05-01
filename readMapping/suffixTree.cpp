@@ -12,13 +12,9 @@ SuffixTree::SuffixTree()
 
 SuffixNode *SuffixTree::findPath(SuffixNode *n, SP section, int suffixNumber)
 {
-    //cout << "Find Path" << endl;
-    //for storing the next node to visit
     SuffixNode *nextHop = nullptr;
 
-    //create a string to describe path, and get first character
     char *path = &_source[section.start];
-    //string path = _source.substr(section.start, section.length);
     char firstInPath = _source[section.start];
 
     //search n's children for an edge potentially matching path
@@ -55,17 +51,12 @@ SuffixNode *SuffixTree::findPath(SuffixNode *n, SP section, int suffixNumber)
     until they differ, or until we reach another node.*/
     else
     {
-        //string childLabel = nextHop->label();
         char *childLabel = &_source[nextHop->_edge.start];
-
-        //cout << "Path: " << path << endl;
-        //`cout << "Chld: " << childLabel << endl;
 
         for (int i = 0; i < nextHop->_edge.length; i++)
         {
             if (childLabel[i] != path[i])
             {
-                //cout << "Mismatch at index " << i << endl;
                 /* If strings no longer match, create a new internal node that 
                 is the new parent of both the nextHop node, and the new leaf 
                 node. The leaf node will contain the remainder of the path that
@@ -76,36 +67,31 @@ SuffixNode *SuffixTree::findPath(SuffixNode *n, SP section, int suffixNumber)
                 SuffixNode *newLeaf = new SuffixNode(&_source);
 
                 //basic info about new nodes
-                newInternal->_isInternal = true; //(true);
-                newLeaf->_isLeaf = true;//(true);
-                newLeaf->_id = suffixNumber;//ID(suffixNumber);
+                newInternal->_isInternal = true;
+                newLeaf->_isLeaf = true;
+                newLeaf->_id = suffixNumber;
 
                 //set edge labels for new nodes and nextHop
-                newInternal->_edge.start = section.start;//setLabel(section.start, i);
+                newInternal->_edge.start = section.start;
                 newInternal->_edge.length = i;
-                newLeaf->_edge.start = section.start + i;//setLabel(section.start + i, section.length - i);
+                newLeaf->_edge.start = section.start + i;
                 newLeaf->_edge.length = section.length - i;
                 nextHop->trimLabelFront(i);
 
-                //cout << "NEWI: " << newInternal->label() << endl;;
-                //cout << "NEWL: " << newLeaf->label() << endl;
-                //cout << "NHOP: " << nextHop->label() << endl;
-
                 //set new string depth values
-                newInternal->_stringDepth = n->_stringDepth + i;//depth(n->depth() + i);
-                //newLeaf->depth(newInternal->depth() + (section.length - i));
+                newInternal->_stringDepth = n->_stringDepth + i;
                 newLeaf->_stringDepth = newInternal->_stringDepth + (section.length - i);
 
                 //set parent child relationships
                 n->removeChild(nextHop);
                 n->addChild(newInternal);
-                newInternal->_parent = n;//setParent(n);
+                newInternal->_parent = n;
 
                 newInternal->addChild(nextHop);
-                nextHop->_parent = newInternal;//setParent(newInternal);
+                nextHop->_parent = newInternal;
 
                 newInternal->addChild(newLeaf);
-                newLeaf->_parent = newInternal;//setParent(newInternal);
+                newLeaf->_parent = newInternal;
 
                 _numNodes += 2;
                 _numInternal += 1;
@@ -130,8 +116,6 @@ SuffixNode *SuffixTree::nodeHops(SuffixNode *n, SP section)
         return n;
     }
 
-    //string beta = _source.substr(section.start, section.length);
-    //char betaFirstChar = beta[0];
     char *beta = &_source[section.start];
     char betaFirstChar = _source[section.start];
 
@@ -170,16 +154,14 @@ SuffixNode *SuffixTree::nodeHops(SuffixNode *n, SP section)
     else
     {
         SuffixNode *newInternal = new SuffixNode(&_source);
-        newInternal->_isInternal = true;//isInternal(true);
+        newInternal->_isInternal = true;
 
         //adjust labels
-        newInternal->_edge.start = section.start;//setLabel(section.start, betaLen);
+        newInternal->_edge.start = section.start;
         newInternal->_edge.length = betaLen;
         nextHop->trimLabelFront(betaLen);
-        //n->trimLabelBack(nextLen - betaLen);
 
         //set depths
-        //newInternal->depth(n->depth() + betaLen);
         newInternal->_stringDepth = n->_stringDepth + betaLen;
 
         //set parent-child relationships
@@ -227,18 +209,12 @@ void SuffixTree::Construct(string input, string alphabet)
     cout << "Constructing Suffix Tree" << endl;
     for (int startIndex = 0; startIndex < _source.length(); startIndex++)
     {
-        //if(startIndex % 10000 == 0){
-        //    cout << startIndex << " of " << finalIndex << endl;;
-        //}
         //determine index for next insertion
         int suffixNumber = startIndex;
-        //string nextSuffix = _source.substr(startIndex);
+
         SP nextSection;
         nextSection.start = startIndex;
         nextSection.length = finalIndex - startIndex;
-        //nextSection.length = nextSuffix.length();
-
-        //cout << finalIndex - startIndex << " " << nextSuffix.length() << endl;
 
         //base case to insert first leaf into tree
         if (lastLeaf == nullptr)
@@ -247,19 +223,18 @@ void SuffixTree::Construct(string input, string alphabet)
         }
 
         //if the last leaf's parent has a suffix link, use it
-        //else if (lastLeaf->getParent()->linkKnown())
         else if(lastLeaf->_parent->_suffixLink != nullptr)
         {
-            SuffixNode *u = lastLeaf->_parent;//getParent();
-            if (u->_isRoot)//isRoot())
+            SuffixNode *u = lastLeaf->_parent;
+            if (u->_isRoot)
             {
                 lastLeaf = findPath(_root, nextSection, suffixNumber);
             }
             else
             {
-                SuffixNode *v = u->_suffixLink;//getSL();
-                nextSection.start += v->_stringDepth;//depth();
-                nextSection.length -= v->_stringDepth;//depth();
+                SuffixNode *v = u->_suffixLink;
+                nextSection.start += v->_stringDepth;
+                nextSection.length -= v->_stringDepth;
                 lastLeaf = findPath(v, nextSection, suffixNumber);
             }
         }
@@ -267,32 +242,32 @@ void SuffixTree::Construct(string input, string alphabet)
         //go to grandparent if parent's link is unknown
         else
         {
-            SuffixNode *u = lastLeaf->_parent;//getParent();
-            SuffixNode *uprime = u->_parent;//getParent();
+            SuffixNode *u = lastLeaf->_parent;
+            SuffixNode *uprime = u->_parent;
 
-            if (uprime->_isRoot)//isRoot())
+            if (uprime->_isRoot)
             {
-                SuffixNode *vprime = uprime->_suffixLink;//getSL();
+                SuffixNode *vprime = uprime->_suffixLink;
                 SP hopSection;
                 hopSection.start = u->getLabel().start + 1;
                 hopSection.length = u->getLabel().length - 1;
                 SuffixNode *v = nodeHops(vprime, hopSection);
-                u->_suffixLink = v;//setSL(v);
-                nextSection.start += v->_stringDepth;//depth();
-                nextSection.length -= v->_stringDepth;//depth();
+                u->_suffixLink = v;
+                nextSection.start += v->_stringDepth;
+                nextSection.length -= v->_stringDepth;
                 lastLeaf = findPath(v, nextSection, suffixNumber);
             }
 
             else
             {
-                SuffixNode *vprime = uprime->_suffixLink;//getSL();
+                SuffixNode *vprime = uprime->_suffixLink;
                 SP hopSection;
-                hopSection.start = u->_edge.start;//getLabel().start;
-                hopSection.length = u->_edge.length;//getLabel().length;
+                hopSection.start = u->_edge.start;
+                hopSection.length = u->_edge.length;
                 SuffixNode *v = nodeHops(vprime, hopSection);
-                u->_suffixLink = v;//setSL(v);
-                nextSection.start += v->_stringDepth;//depth();
-                nextSection.length -= v->_stringDepth;//depth();
+                u->_suffixLink = v;
+                nextSection.start += v->_stringDepth;
+                nextSection.length -= v->_stringDepth;
                 lastLeaf = findPath(v, nextSection, suffixNumber);
             }
         }
@@ -394,8 +369,6 @@ int SuffixTree::dfsTraverseHelper(SuffixNode *n)
 
 void SuffixTree::PrepareST()
 {
-    //_A = (int *)malloc(sizeof(int) * _source.length());
-    //_A_size = _source.length();
     _nextIndex = 0;
     PrepareSTRecursive(_root);
 }
@@ -419,7 +392,7 @@ void SuffixTree::PrepareSTRecursive(SuffixNode *n)
     }
     if (n->isInternal())
     {
-        for (auto c : n->_children)//getChildren())
+        for (auto c : n->_children)
         {
             PrepareSTRecursive(c);
         }
@@ -447,10 +420,9 @@ vector<int> SuffixTree::FindLoc(string read)
 label_restart_while:
     while (read_ptr < read.length())
     {
-        //cout << "depth: " << T->depth() << endl;
         next = nullptr;
 
-        for (SuffixNode *child : T->_children)//getChildren())
+        for (SuffixNode *child : T->_children)
         {
             char childChar = _source[child->_edge.start];
             if (childChar == read[read_ptr])
@@ -462,7 +434,6 @@ label_restart_while:
 
         if (next == nullptr)
         {
-            //cout << "findloc: next is nullptr, mismatch case A" << endl;
             u = T;
             if (u->_stringDepth > deepestDepth && u->_stringDepth >= _x)
             {
@@ -473,7 +444,6 @@ label_restart_while:
             goto label_restart_while;
         }
 
-        //string comp = next->label();
         char *comp = &_source[next->_edge.start];
 
         for (int i = 0; i < next->_edge.length; i++)
@@ -498,8 +468,6 @@ label_restart_while:
     vector<int> results;
     if (deepestNode != nullptr)
     {
-        //cout << "deepest node not null!" << endl;
-        //cout << "deepest node start: " << deepestNode->_start_leaf_index << " end: " << deepestNode->_end_leaf_index << endl;
         for (int i = deepestNode->_start_leaf_index; i <= deepestNode->_end_leaf_index; i++)
         {
             results.push_back(_A[i]);

@@ -66,6 +66,7 @@ int main(int argc, char *argv[]){
     cout << "Construction complete: " << durationMs.count() << " milliseconds ";
     auto durationSec = duration_cast<seconds>(constructionEnd - constructionStart);
     cout << "(" << durationSec.count() << " seconds)" << endl;
+    tree.PrintTreeStatistics();
 
     // (2) Prepare Suffix Tree
     cout << "Preparing Suffix Tree for mapping reads" << endl;
@@ -102,7 +103,7 @@ int main(int argc, char *argv[]){
             string referenceSubstring = refSeqVec[0].sequence.substr(lowerBound, subsequencelength);
             int matches = 0;
             int length = 0;
-            atable.localAlign(g.sequence, referenceSubstring, &matches, &length);
+            atable.localAlign(&g.sequence, &referenceSubstring, &matches, &length);
             totalAlignments++;
             double loc_percentIdentity = (double)matches / (double)length;
             double loc_lenCoverage = (double)length / (double)g.sequence.length();
