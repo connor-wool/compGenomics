@@ -10,7 +10,13 @@ Written by Connor Wool, April 2018
 #include <string>
 #include <iostream>
 
-#include "stringPoint.h"
+//depreciated, moved to this file
+//#include "stringPoint.h"
+
+typedef struct StringPoint{
+    int start;
+    int length;
+}SP;
 
 class SuffixNode
 {
