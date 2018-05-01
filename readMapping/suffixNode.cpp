@@ -1,6 +1,6 @@
 #include "suffixNode.h"
 
-//All nodes start as internal nodes, all values set to -1
+//All values set to -1
 //requires a pointer to the source string
 SuffixNode::SuffixNode(std::string *source)
 {
@@ -31,15 +31,11 @@ SuffixNode *SuffixNode::getParent()
 //add a child to the current node, in alpha order
 void SuffixNode::addChild(SuffixNode *n)
 {
-    //std::string nLabel = _source->substr(n->_edge.start, n->_edge.length);
     char nFirst = (*_source)[_edge.start];
-    //char nFirst = _source[n->_edge.start];
     for (int i = 0; i < _children.size(); i++)
     {
         SuffixNode *child = _children[i];
-        //std::string cLabel = _source->substr(child->_edge.start, child->_edge.length);
         char cFirst = (*_source)[child->_edge.start];
-        //char cFirst = *_source[child->_edge.start];
         if (nFirst < cFirst)
         {
             _children.insert(_children.begin() + i, n);
@@ -78,7 +74,9 @@ void SuffixNode::setLabel(int start, int length)
     }
     else
     {
-        std::cout << "SuffixNode::SetLabel:Error: " << start << " " << length << " invalid params" << std::endl;
+        std::cout << "SuffixNode::SetLabel:Error: ";
+        std::cout << start << " " << length;
+        std::cout << " invalid params" << std::endl;
     }
 }
 
