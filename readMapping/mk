@@ -1,3 +1,3 @@
 #! /bin/bash
 
-g++ -ggdb -std=c++11 -o map suffixNode.cpp suffixTree.cpp alignmentTable.cpp main.cpp
+g++ -ggdb -std=c++11 -Wall -Wno-sign-compare -o map src/suffixNode.cpp src/suffixTree.cpp src/alignmentTable.cpp src/main.cpp
