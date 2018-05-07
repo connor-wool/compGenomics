@@ -10,7 +10,7 @@
 #include <chrono>
 #include <fstream>
 
-#define VERBOSE_OUTPUT 0
+#define VERBOSE_OUTPUT 1
 
 using namespace std;
 using namespace std::chrono;
@@ -91,7 +91,8 @@ int main(int argc, char *argv[]){
         double LengthCoverage = 0;
         int maxHitStart = -1;
         int maxHitEnd = -1;
-        vector<int> positions = tree.FindLoc(g.sequence);
+        //vector<int> positions = tree.FindLoc(g.sequence);
+        vector<int> positions = tree.BruteFindLoc(&g.sequence);
         //cout << g.name << " got " << positions.size() << " positions" << endl;
         for (int p : positions)
         {

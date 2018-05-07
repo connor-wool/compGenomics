@@ -1,0 +1,10 @@
+READ_1_from_Peach_reference.fasta_AT_712655 No hit found
+READ_2_from_Peach_reference.fasta_AT_4832697 4832720 4832822
+READ_3_from_Peach_reference.fasta_AT_2116115 No hit found
+READ_4_from_Peach_reference.fasta_AT_2339246 No hit found
+READ_5_from_Peach_reference.fasta_AT_1683336 No hit found
+READ_6_from_Peach_reference.fasta_AT_2601757 No hit found
+READ_7_from_Peach_reference.fasta_AT_4773637 No hit found
+READ_8_from_Peach_reference.fasta_AT_1842867 No hit found
+READ_9_from_Peach_reference.fasta_AT_4627132 No hit found
+READ_10_from_Peach_reference.fasta_AT_4184896 No hit found

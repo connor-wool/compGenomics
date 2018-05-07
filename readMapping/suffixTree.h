@@ -60,5 +60,5 @@ class SuffixTree{
     void PrepareSTRecursive(SuffixNode *n);
     //void FindLoc(string read, SuffixNode *n);
     vector<int> FindLoc(string read);
-
+    vector<int> BruteFindLoc(string *read);
 };

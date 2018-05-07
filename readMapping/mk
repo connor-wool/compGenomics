@@ -1,3 +1,3 @@
 #! /bin/bash
 
-g++ -ggdb -std=c++11 -O3 -o map suffixNode.cpp suffixTree.cpp alignmentTable.cpp main.cpp
+g++ -ggdb -std=c++11 -o map suffixNode.cpp suffixTree.cpp alignmentTable.cpp main.cpp
