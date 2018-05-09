@@ -18,12 +18,13 @@ SuffixNode *SuffixTree::findPath(SuffixNode *n, SP section, int suffixNumber)
     char firstInPath = _source[section.start];
 
     //search n's children for an edge potentially matching path
-    for (SuffixNode *child : n->_children)//getChildren())
+    //for (SuffixNode *child : n->_children)
+    for(int i = 0; i < n->_children.size(); i++)
     {
-        char firstInChild = _source[child->_edge.start];
+        char firstInChild = _source[n->_children[i]->_edge.start];
         if (firstInChild == firstInPath)
         {
-            nextHop = child;
+            nextHop = n->_children[i];
             break;
         }
     }
@@ -121,12 +122,13 @@ SuffixNode *SuffixTree::nodeHops(SuffixNode *n, SP section)
 
     SuffixNode *nextHop = nullptr;
 
-    for (SuffixNode *child : n->_children)
+    //for (SuffixNode *child : n->_children)
+    for(int i = 0; i < n->_children.size(); i++)
     {
-        char childFirstChar = _source[child->_edge.start];
+        char childFirstChar = _source[n->_children[i]->_edge.start];
         if (childFirstChar == betaFirstChar)
         {
-            nextHop = child;
+            nextHop = n->_children[i];
             break;
         }
     }
@@ -181,6 +183,7 @@ SuffixNode *SuffixTree::nodeHops(SuffixNode *n, SP section)
 
 void SuffixTree::Construct(string input, string alphabet)
 {
+    cout << "Constructing Suffix Tree" << endl;
     if (!verifyAlphabet(input, alphabet))
     {
         cout << "Error in construction, alphabet does not match" << endl;
@@ -188,8 +191,8 @@ void SuffixTree::Construct(string input, string alphabet)
     }
 
     //create the master copy of the source string
-    string master = input + "$";
-    _source = master;
+    //string master = input + "$";
+    _source = input + "$";
     _alphabet = alphabet;
 
     //create the root node
@@ -206,7 +209,6 @@ void SuffixTree::Construct(string input, string alphabet)
 
     int finalIndex = _source.length();
 
-    cout << "Constructing Suffix Tree" << endl;
     for (int startIndex = 0; startIndex < _source.length(); startIndex++)
     {
         //determine index for next insertion
@@ -249,8 +251,8 @@ void SuffixTree::Construct(string input, string alphabet)
             {
                 SuffixNode *vprime = uprime->_suffixLink;
                 SP hopSection;
-                hopSection.start = u->_edge.start + 1; //u->getLabel().start + 1;
-                hopSection.length = u->_edge.length - 1; //u->getLabel().length - 1;
+                hopSection.start = u->_edge.start + 1;
+                hopSection.length = u->_edge.length - 1;
                 SuffixNode *v = nodeHops(vprime, hopSection);
                 u->_suffixLink = v;
                 nextSection.start += v->_stringDepth;
@@ -297,9 +299,9 @@ void SuffixTree::renumberInternals()
 int SuffixTree::renumberInternalsHelper(SuffixNode *n, int value)
 {
     int idVal = value;
-    if (n->_isInternal)//isInternal())
+    if (n->_isInternal)
     {
-        n->_id = idVal; //ID(idVal);
+        n->_id = idVal;
         idVal += 1;
         for (auto nodeptr : n->_children)
         {
@@ -311,37 +313,40 @@ int SuffixTree::renumberInternalsHelper(SuffixNode *n, int value)
 
 void SuffixTree::BWT()
 {
-    bwtHelper(_root, &_source);
+    bwtHelper(_root);
 }
 
-void SuffixTree::bwtHelper(SuffixNode *n, string *source)
+void SuffixTree::bwtHelper(SuffixNode *n)
 {
     if (n->_id == 0 && n->_isLeaf)
     {
-        cout << source->at(source->length() - 1) << endl;
+        cout << _source[_source.length() - 1] << endl;
     }
     else if (n->_isLeaf)
     {
-        cout << source->at(n->_id - 1) << endl;
+        cout << _source[n->_id - 1] << endl;
     }
     else
     {
-        for (auto nodeptr : n->_children)
-        {
-            bwtHelper(nodeptr, source);
+        for(int i = 0; i < n->_children.size(); i++){
+            bwtHelper(n->_children[i]);
         }
     }
 }
 
 void SuffixTree::PrintTreeStatistics()
 {
+    cout << "+------------------------------+" << endl;
     cout << "Connor Wool's Suffix Tree Stats:" << endl;
-    cout << "Internal Nodes: " << _numInternal << endl;
-    cout << "Leaf Nodes: " << _numLeaves << endl;
-    cout << "Total Nodes: " << _numNodes << endl;
+    cout << "Nodes in tree:" << endl;
+    cout << "\tInternal -- " << _numInternal << endl;
+    cout << "\tLeaf ------ " << _numLeaves << endl;
+    cout << "\tTotal ----- " << _numNodes << endl;
     int treeSizeBytes = _numNodes * sizeof(SuffixNode);
     cout << "Size of tree (bytes): " << treeSizeBytes << endl;
     cout << "Size of node (bytes): " << sizeof(SuffixNode) << endl;
+    cout << "+------------------------------+" << endl;
+
 }
 
 void SuffixTree::dfsTraverse()
@@ -383,26 +388,22 @@ void SuffixTree::PrepareSTRecursive(SuffixNode *n)
     {
         _A.push_back(n->_id);
         //if (n->_stringDepth >= _x)
-        {
-            n->_start_leaf_index = _nextIndex;
-            n->_end_leaf_index = _nextIndex;
-        }
+        n->_start_leaf_index = _nextIndex;
+        n->_end_leaf_index = _nextIndex;
         _nextIndex++;
         return;
     }
-    if (n->_isInternal)
+    if (n->_isInternal == true)
     {
         for (auto c : n->_children)
         {
             PrepareSTRecursive(c);
         }
         //if (n->_stringDepth >= _x)
-        {
-            SuffixNode *uleft = n->_children[0];
-            SuffixNode *uright = n->_children[n->_children.size() - 1];
-            n->_start_leaf_index = uleft->_start_leaf_index;
-            n->_end_leaf_index = uright->_end_leaf_index;
-        }
+        SuffixNode *uleft = n->_children[0];
+        SuffixNode *uright = n->_children[n->_children.size() - 1];
+        n->_start_leaf_index = uleft->_start_leaf_index;
+        n->_end_leaf_index = uright->_end_leaf_index;
     }
 }
 
@@ -476,7 +477,7 @@ label_restart_while:
     return results;
 }
 
-vector<int> SuffixTree::BruteFindLoc(string *read){
+void SuffixTree::BruteFindLoc(string *read, vector<int> *positions){
 
     //variables to conduct search
     SuffixNode *current = nullptr;
@@ -508,7 +509,7 @@ vector<int> SuffixTree::BruteFindLoc(string *read){
         //if the child is null, we've detected a mismatch
         //the current node should be checked for being the deepest node
         if(next == nullptr){
-            if(current->_stringDepth > maxStringDepth && current->_stringDepth > _x){
+            if(current->_stringDepth > maxStringDepth){ //&& current->_stringDepth > _x){
                 maxStringDepth = current->_stringDepth;
                 deepestNode = current;
             }
@@ -518,18 +519,20 @@ vector<int> SuffixTree::BruteFindLoc(string *read){
         //otherwise, walk along it's edge label and search for a mismatch
         char *compare = &_source[next->_edge.start];
         bool matching = true;
-        for (int cmpPtr = 0; matching && cmpPtr < next->_edge.length; cmpPtr++)
+        for (int cmpPtr = 0; (matching == true && cmpPtr < next->_edge.length); cmpPtr++)
         {
             //check if the current chars mismatch
             if (compare[cmpPtr] != (*read)[readPtr])
             {
-                if(next->_stringDepth > maxStringDepth && next->_stringDepth > _x){
-                    maxStringDepth = next->_stringDepth;
-                    deepestNode = next;
+                if(current->_stringDepth > maxStringDepth){ //} && next->_stringDepth > _x){
+                    maxStringDepth = current->_stringDepth;
+                    deepestNode = current;
                 }
                 matching = false;
             }
-            readPtr++;
+            else{
+                readPtr++;
+            }
         }
 
         if(matching){
@@ -538,14 +541,12 @@ vector<int> SuffixTree::BruteFindLoc(string *read){
         }
     }
 
-    vector<int> results;
     if (deepestNode != nullptr)
     {
-        cout << "d:" << deepestNode->_stringDepth << " leaf?:" << deepestNode->_isLeaf << endl;
+        //cout << "d:" << deepestNode->_stringDepth << " leaf?:" << deepestNode->_isLeaf << endl;
         for (int i = deepestNode->_start_leaf_index; i <= deepestNode->_end_leaf_index; i++)
         {
-            results.push_back(_A[i]);
+            positions->push_back(_A[i]);
         }
     }
-    return results;
 }

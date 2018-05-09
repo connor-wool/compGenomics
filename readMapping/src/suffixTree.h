@@ -42,7 +42,7 @@ class SuffixTree{
     void renumberInternals();
     int renumberInternalsHelper(SuffixNode *n, int value);
 
-    void bwtHelper(SuffixNode *n, string *source);
+    void bwtHelper(SuffixNode *n);
     //int sumInternalNodeDepth(SuffixNode *n);
     //int findMaxInternalNodeDepth(SuffixNode *n);
     int dfsTraverseHelper(SuffixNode *n);
@@ -60,5 +60,5 @@ class SuffixTree{
     void PrepareSTRecursive(SuffixNode *n);
     //void FindLoc(string read, SuffixNode *n);
     vector<int> FindLoc(string read);
-    vector<int> BruteFindLoc(string *read);
+    void BruteFindLoc(string *read, vector<int> *positions);
 };

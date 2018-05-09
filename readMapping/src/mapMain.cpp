@@ -42,13 +42,13 @@ int main(int argc, char *argv[]){
 
     //read reference genome
     fpReference.setInputFile(referenceGenomeFastaFile);
-    fpReference.readFile();
+    //fpReference.readFile();
     vector<GeneSequence> refSeqVec = fpReference.getSequences();
     cout << "Read in reference sequence of size [" << refSeqVec[0].sequence.length() << "]" << endl;
 
     //read reads fasta file
     fpReads.setInputFile(readFastaFile);
-    fpReads.readFile();
+    //fpReads.readFile();
     vector<GeneSequence> readSeqVec = fpReads.getSequences();
     cout << "Got " << readSeqVec.size() << " reads from file" << endl;
 
@@ -84,30 +84,43 @@ int main(int argc, char *argv[]){
     atable.setScores(1, -2, -5, -1);
 
     int totalAlignments = 0;
+    int totalHits = 0;
     
     auto mapStart = chrono::high_resolution_clock::now();
+    vector<int> positions;
     for (GeneSequence g : readSeqVec)
     {
         double LengthCoverage = 0;
         int maxHitStart = -1;
         int maxHitEnd = -1;
-        //vector<int> positions = tree.FindLoc(g.sequence);
-        vector<int> positions = tree.BruteFindLoc(&g.sequence);
-        //cout << g.name << " got " << positions.size() << " positions" << endl;
+
+        positions.clear();
+        tree.BruteFindLoc(&g.sequence, &positions);
+
         for (int p : positions)
         {
             int lowerBound = p - g.sequence.length();
             if(lowerBound < 0){
                 lowerBound = 0;
             }
+
             int subsequencelength = 3 * g.sequence.length();
             string referenceSubstring = refSeqVec[0].sequence.substr(lowerBound, subsequencelength);
-            int matches = 0;
-            int length = 0;
-            atable.localAlign(&g.sequence, &referenceSubstring, &matches, &length);
+
+            atable.setSequences(&g.sequence, &referenceSubstring);
+            atable.localAlign();
+
+            int matches = atable.getMatches();
+            int length = atable.getAlignmentLength();
             totalAlignments++;
+
             double loc_percentIdentity = (double)matches / (double)length;
             double loc_lenCoverage = (double)length / (double)g.sequence.length();
+            
+            //cout << "\tmatches: " << matches << " length: " << length;
+            //cout << " ident: " << loc_percentIdentity;
+            //cout << " coverage: " << loc_lenCoverage << endl;
+
             if(loc_percentIdentity >= 0.9 && loc_lenCoverage >= .8){
                 if(loc_lenCoverage > LengthCoverage){
                     LengthCoverage = loc_lenCoverage;
@@ -125,10 +138,11 @@ int main(int argc, char *argv[]){
         }
         else{
             if(VERBOSE_OUTPUT){
-                cout << g.name << "\t" << maxHitStart << " " << maxHitEnd;
+                cout << g.name << "\t" << maxHitStart << "\t" << maxHitEnd;
                 cout << "\t(" << positions.size() << " pos.)" << endl;
             }
             outputFile << g.name << " " << maxHitStart << " " << maxHitEnd << endl;
+            totalHits++;
         }
     }
     auto mapEnd = chrono::high_resolution_clock::now();
@@ -139,6 +153,7 @@ int main(int argc, char *argv[]){
 
     cout << "Performed " << totalAlignments << " alignments on " << readSeqVec.size() << " reads." << endl;
     cout << "Average: " << ((double)totalAlignments / (double)readSeqVec.size()) << " alignments per read" << endl;
+    cout << "Hit Rate: " << ((double)totalHits / readSeqVec.size()) * 100 << "%" << endl;
 
     durationMs = duration_cast<milliseconds>(mapEnd - constructionStart);
     cout << "Program complete: " << durationMs.count() << " milliseconds ";

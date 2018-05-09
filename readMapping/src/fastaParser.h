@@ -22,6 +22,7 @@ but that's outside the current scope of work.
 #include <sstream>
 #include <fstream>
 #include "geneSequence.h"
+#include <stdlib.h>
 
 using namespace std;
 
@@ -30,14 +31,15 @@ class FastaParser
   private:
     vector<GeneSequence> sequences;
     string filename;
+    int readFile();
 
   public:
     void setInputFile(string inputFile)
     {
         this->filename = inputFile;
+        readFile();
     }
 
-    int readFile();
     vector<GeneSequence> getSequences();
 };
 
@@ -51,15 +53,11 @@ vector<GeneSequence> FastaParser::getSequences()
 
 int FastaParser::readFile()
 {
-
-    //cout << "Parsing FASTA file\n";
-
     if (this->filename.empty())
     {
         cout << "Error parsing FASTA file, no filename provided.";
         exit(1);
     }
-
     string line;          //stores return data from each readline call
     ifstream inputStream; //stream object handling input file
     int index = -1;       //used to track current GeneSequence object
@@ -99,14 +97,4 @@ int FastaParser::readFile()
             }
         }
     }
-
-    /*
-    cout << "FASTA file parsed!\n";
-    for(GeneSequence g : this->sequences){
-        cout << "++++++++++\n";
-        cout << "Name: `" << g.name << "`\n";
-        cout << "Sequence:\n" << g.sequence << "\n";
-        cout << "++++++++++\n";
-    }
-    */
 }

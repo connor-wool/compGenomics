@@ -1,6 +1,41 @@
 #include "alignmentTable.h"
 
+AlignmentTable::AlignmentTable(){
+    reset();
+}
+
+void AlignmentTable::reset(){
+    _s1 = nullptr;
+    _s2 = nullptr;
+    _hasGeneNames = false;
+    _numRows = 0;
+    _numCols = 0;
+    _s1Seq = "";
+    _s2Seq = "";
+    _middleString = "";
+    _cellTable.clear();
+    _numMatches = 0;
+    _numGaps = 0;
+    _numMismatches = 0;
+    _numOpeningGaps = 0;
+    _alignmentScore = 0;
+}
+
+void AlignmentTable::setSequences(GeneSequence *gene1, GeneSequence *gene2){
+    reset();
+    _hasGeneNames = true;
+    g1 = *gene1;
+    g2 = *gene2;
+    _s1 = &g1.sequence;
+    _s2 = &g2.sequence;
+    _numRows = (*_s2).length() + 1;
+    _numCols = (*_s1).length() + 1;
+    initTable();
+}
+
+/*
 void AlignmentTable::localAlign(string *s1, string *s2, int *matches, int *alignLen){
+    reset();
     setSequences(s1, s2);
     initTable();
     fillTableLocal();
@@ -8,6 +43,7 @@ void AlignmentTable::localAlign(string *s1, string *s2, int *matches, int *align
     *matches = retraceLocal();
     *alignLen = _s1Seq.length();
 }
+*/
 
 int AlignmentTable::selectMax(int a, int b, int c)
 {
@@ -33,10 +69,9 @@ void AlignmentTable::setScores(int match, int mismatch, int h, int g)
 
 void AlignmentTable::setSequences(string *s1, string *s2)
 {
-    //set sequence strings
+    reset();
     _s1 = s1;
     _s2 = s2;
-    //set size of table, leaving room for empty first row/col
     _numRows = (*_s2).length() + 1;
     _numCols = (*_s1).length() + 1;
     initTable();
@@ -44,7 +79,6 @@ void AlignmentTable::setSequences(string *s1, string *s2)
 
 void AlignmentTable::initTable()
 {
-    _cellTable.clear();
     for (int y = 0; y < _numRows; y++)
     {
         vector<tableCell> thisRow;
@@ -58,20 +92,17 @@ void AlignmentTable::initTable()
         }
         _cellTable.push_back(thisRow);
     }
-    //cout << "created table: ";
-    //cout << _cellTable.size() << " rows, ";
-    //cout << _cellTable[0].size() << " cols" << endl;
 }
 
 void AlignmentTable::fillTableGlobal()
 {
     tableCell *current;
-
+    
     //set first cell to zero
     current = &_cellTable[0][0];
     current->sub = 0;
-    current->del = 0;
-    current->ins = 0;
+    current->del = NEGATIVE_INF;
+    current->ins = NEGATIVE_INF;
 
     for (int y = 1; y < _cellTable.size(); y++)
     {
@@ -103,16 +134,16 @@ void AlignmentTable::fillTableLocal(){
     {
         current = &_cellTable[y][0];
         current->ins = 0;
-        current->sub = NEGATIVE_INF;
-        current->del = NEGATIVE_INF;
+        current->sub = 0;
+        current->del = 0;
     }
 
     for (int x = 1; x < _cellTable[0].size(); x++)
     {
         current = &_cellTable[0][x];
         current->del = 0;
-        current->ins = NEGATIVE_INF;
-        current->sub = NEGATIVE_INF;
+        current->ins = 0;
+        current->sub = 0;
     }
 }
 
@@ -128,13 +159,12 @@ void AlignmentTable::scoreCell(int x, int y, int mode)
 
     if (mode == 0) //global alignment scoring, allow negatives
     {
-        //tableCell *current = &_cellTable[x][y];
         current->sub = scoreSub(x, y);
         current->ins = scoreIns(x, y);
         current->del = scoreDel(x, y);
     }
 
-    if (mode == 1) //local alignment scoring, don't allow negatives
+    else if (mode == 1) //local alignment scoring, don't allow negatives
     {
         current->sub = scoreSub(x,y);
         if(current->sub < 0){
@@ -148,7 +178,6 @@ void AlignmentTable::scoreCell(int x, int y, int mode)
         if(current->del < 0){
             current->del = 0;
         }
-
     }
 }
 
@@ -168,9 +197,9 @@ int AlignmentTable::scoreDel(int x, int y)
     {
         max = compare->sub + _score_h + _score_g;
     }
-    if (compare->del + _score_h + _score_g > max)
+    if (compare->ins + _score_h + _score_g > max)
     {
-        max = compare->del + _score_h + _score_g;
+        max = compare->ins + _score_h + _score_g;
     }
     return max;
 }
@@ -236,7 +265,7 @@ void AlignmentTable::localAlign()
             scoreCell(x,y,1);
         }
     }
-    //retraceLocal();
+    retraceLocal();
 }
 
 void AlignmentTable::retraceGlobal(){
@@ -245,9 +274,13 @@ void AlignmentTable::retraceGlobal(){
 
     tableCell *current = &_cellTable[y][x];
 
+    _alignmentScore = selectMax(current->ins, current->del, current->sub);
+
     _s1Seq = "";
     _s2Seq = "";
     _middleString = "";
+
+    bool previousWasGap = false;
 
     while( x > 0 && y > 0){
 
@@ -260,19 +293,32 @@ void AlignmentTable::retraceGlobal(){
         int subMax = selectMax(sub->ins, sub->del, sub->sub);
 
         int max = selectMax(insMax, delMax, subMax);
-        
+
         if(insMax == max){
             _s1Seq = "-" + _s1Seq;
             _s2Seq = (*_s2)[y-1] + _s2Seq;
             _middleString = " " + _middleString;
             y--;
+            _numGaps++;
+            if(previousWasGap == false){
+                _numOpeningGaps++;
+            }
+            previousWasGap = true;
         }
+
+        
 
         else if(delMax == max){
             _s1Seq = (*_s1)[x-1] + _s1Seq;
             _s2Seq = "-" + _s2Seq;
             _middleString = " " + _middleString;
             x--;
+            _numGaps++;
+            if (previousWasGap == false)
+            {
+                _numOpeningGaps++;
+            }
+            previousWasGap = true;
         }
 
         else if(subMax == max){
@@ -280,12 +326,15 @@ void AlignmentTable::retraceGlobal(){
             _s2Seq = (*_s2)[y-1] + _s2Seq;
             if((*_s1)[x-1] == (*_s2)[y-1]){
                 _middleString = "|" + _middleString;
+                _numMatches++;
             }
             else{
                 _middleString = " " + _middleString;
+                _numMismatches++;
             }
             x--;
             y--;
+            previousWasGap = false;
         }
 
         current = &_cellTable[y][x];
@@ -296,6 +345,11 @@ void AlignmentTable::retraceGlobal(){
         _s2Seq = "-" + _s2Seq;
         _middleString = " " + _middleString;
         x--;
+        _numGaps++;
+        if(previousWasGap == false){
+            _numOpeningGaps++;
+        }
+        previousWasGap = true;
     }
 
     while(y > 0){
@@ -303,15 +357,23 @@ void AlignmentTable::retraceGlobal(){
         _s2Seq = (*_s2)[y-1] + _s2Seq;
         _middleString = " " + _middleString;
         y--;
+        _numGaps++;
+        if (previousWasGap == false)
+        {
+            _numOpeningGaps++;
+        }
+        previousWasGap = true;
     }
 }
 
 int AlignmentTable::retraceLocal(){
 
-    int numMatches = 0;
+    //use these to find max score in table
     int xmax = -1;
     int ymax = -1;
     int valMax = NEGATIVE_INF;
+
+    bool previousWasGap = false;
 
     for(int y = 0; y < _cellTable.size(); y++){
         for(int x = 0; x < _cellTable[0].size(); x++){
@@ -324,14 +386,15 @@ int AlignmentTable::retraceLocal(){
         }
     }
 
-    //cout << "xmax " << xmax << " ymax " << ymax << endl;
-
     _s1Seq = "";
     _s2Seq = "";
     _middleString = "";
+
     int x = xmax;
     int y = ymax;
     tableCell *current = &_cellTable[y][x];
+
+    _alignmentScore = selectMax(current->ins, current->del, current->sub);
 
     while(selectMax(current->ins, current->del, current->sub) > 0){
 
@@ -344,12 +407,18 @@ int AlignmentTable::retraceLocal(){
         int subMax = selectMax(sub->ins, sub->del, sub->sub);
 
         int max = selectMax(insMax, delMax, subMax);
-        
+
         if(insMax == max){
             _s1Seq = "-" + _s1Seq;
             _s2Seq = (*_s2)[y-1] + _s2Seq;
             _middleString = " " + _middleString;
             y--;
+            _numGaps++;
+            if (previousWasGap == false)
+            {
+                _numOpeningGaps++;
+            }
+            previousWasGap = true;
         }
 
         else if(delMax == max){
@@ -357,6 +426,12 @@ int AlignmentTable::retraceLocal(){
             _s2Seq = "-" + _s2Seq;
             _middleString = " " + _middleString;
             x--;
+            _numGaps++;
+            if (previousWasGap == false)
+            {
+                _numOpeningGaps++;
+            }
+            previousWasGap = true;
         }
 
         else if(subMax == max){
@@ -364,20 +439,22 @@ int AlignmentTable::retraceLocal(){
             _s2Seq = (*_s2)[y-1] + _s2Seq;
             if((*_s1)[x-1] == (*_s2)[y-1]){
                 _middleString = "|" + _middleString;
-                numMatches++;
+                _numMatches++;
             }
             else{
                 _middleString = " " + _middleString;
+                _numMismatches++;
             }
             x--;
             y--;
+            previousWasGap = false;
         }
 
         current = &_cellTable[y][x];
     }
-    return numMatches;
 }
 
+/*
 vector<string> AlignmentTable::getAlignments()
 {
     vector<string> results;
@@ -385,6 +462,7 @@ vector<string> AlignmentTable::getAlignments()
     results.push_back(_s2Seq);
     return results;
 }
+*/
 
 void AlignmentTable::printTable()
 {
@@ -401,12 +479,88 @@ void AlignmentTable::printTable()
 }
 
 void AlignmentTable::printSequences(){
+    cout << "+------------------------+" << endl;
+    cout << "Final Alignment Output" << endl;
+    cout << "+------------------------+" << endl;
+    cout << "Parameters: match = " << _score_match;
+    cout << ", mismatch = " << _score_mismatch;
+    cout << ", h = " << _score_h;
+    cout << ", g = " << _score_g << endl << endl;
+
+    if(_hasGeneNames){
+        cout << "Sequence 1: `" << g1.name << "`, length = " << _s1->length() << endl;
+        cout << "Sequence 2: `" << g2.name << "`, length = " << _s2->length() << endl << endl;
+    }
+    else{
+        cout << "NOTICE: No sequence names avaliable" << endl;
+        cout << "Sequence 1: `N/A`, length = " << _s1->length() << endl;
+        cout << "Sequence 2: `N/A`, length = " << _s2->length() << endl << endl;
+    }
+
+
+    int s1Ptr = 0;
+    int s2Ptr = 0;
+
     for (int i = 0; i < _s1Seq.length(); i += 60){
+
         string s1sub = _s1Seq.substr(i, 60);
         string s2sub = _s2Seq.substr(i, 60);
         string midsub = _middleString.substr(i, 60);
-        cout << s1sub << endl;
-        cout << midsub << endl;
-        cout << s2sub << endl;
+
+        s1Ptr++;
+        s2Ptr++;
+
+        //print the s1 string
+        cout << "s1\t" << s1Ptr << "\t";
+        cout << s1sub;
+        for(auto c : s1sub){
+            if(c != '-'){
+                s1Ptr++;
+            }
+        }
+        s1Ptr--;
+        cout << "  " << s1Ptr << endl;
+
+        cout << "\t\t" << midsub << endl;
+
+        cout << "s2\t" << s2Ptr << "\t";
+        cout << s2sub;
+        for(auto c : s2sub){
+            if(c != '-'){
+                s2Ptr++;
+            }
+        }
+        s2Ptr--;
+        cout << "  " << s2Ptr << endl << endl;
     }
+
+    cout << "Scores:" << endl;
+    cout << "\tGlobal Optimal Score: " << _alignmentScore << endl;
+    cout << "\tMatches: " << _numMatches << endl;
+    cout << "\tMismatches: " << _numMismatches << endl;
+    cout << "\tGaps: " << _numGaps << endl;
+    cout << "\tOpening Gaps: " << _numOpeningGaps << endl;
+    cout << "Identities:" << endl;
+    cout << "\t " << _numMatches << "/" << _s1Seq.length() << "(" << ((double)_numMatches / _s1Seq.length()) * 100 << "%)" << endl;
+    cout << "Gaps:" << endl;
+    cout << "\t " << _numGaps << "/" << _s1Seq.length() << " (" << ((double)_numGaps / _s1Seq.length()) * 100 << "%)" << endl;
 }
+
+int AlignmentTable::getMatches(){
+    return _numMatches;
+}
+    int AlignmentTable::getMismatches(){
+        return _numMismatches;
+    }
+    int AlignmentTable::getScore(){
+        return _alignmentScore;
+    }
+    int AlignmentTable::getGaps(){
+        return _numGaps;
+    }
+    int AlignmentTable::getOpeningGaps(){
+        return _numOpeningGaps;
+    }
+    int AlignmentTable::getAlignmentLength(){
+        return _s1Seq.length();
+    }

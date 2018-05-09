@@ -4,18 +4,19 @@
 //requires a pointer to the source string
 SuffixNode::SuffixNode(std::string *source)
 {
-    _source = source;
-    _id = -1;
     _suffixLink = nullptr;
     _parent = nullptr;
+    _source = source;
+    //vector needs no initalization
+    _id = -1;
+    _stringDepth = -1;
+    _start_leaf_index = -1;
+    _end_leaf_index = -1;
     _edge.start = -1;
     _edge.length = -1;
-    _stringDepth = -1;
     _isInternal = false;
     _isRoot = false;
     _isLeaf = false;
-    _start_leaf_index = -1;
-    _end_leaf_index = -1;
 }
 
 //add a child to the current node, in alpha order

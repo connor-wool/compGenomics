@@ -17,19 +17,19 @@ typedef struct StringPoint{
 
 class SuffixNode
 {
-public:
-  int _id;
+  public:
   SuffixNode* _suffixLink;
   SuffixNode* _parent;
   std::string* _source;
-  SP _edge;
-  int _stringDepth;
   std::vector<SuffixNode *> _children;
+  int _id;
+  int _stringDepth;
+  int _start_leaf_index;
+  int _end_leaf_index;
+  SP _edge;
   bool _isInternal;
   bool _isRoot;
   bool _isLeaf;
-  int _start_leaf_index;
-  int _end_leaf_index;
 
   //constructor
   SuffixNode(std::string *source);
