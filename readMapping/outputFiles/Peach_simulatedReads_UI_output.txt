@@ -1,0 +1,22 @@
+ead in reference sequence of size [5362495]
+Got 500000 reads from file
+Constructing Suffix Tree
+Construction complete: 10868 milliseconds (10 seconds)
++------------------------------+
+Connor Wool's Suffix Tree Stats:
+Nodes in tree:
+    Internal -- 3583080
+    Leaf ------ 5362496
+    Total ----- 8945576
+Size of tree (bytes): 715646080
+Size of node (bytes): 80
++------------------------------+
+Preparing Suffix Tree for mapping reads
+Prepare Suffix Tree complete: 1893 milliseconds (1 seconds)
+Mapping reads to reference genome
+Read Mapping complete: 5277240 milliseconds (5277 seconds)
+Performed 1190280 alignments on 500000 reads.
+Average: 2.38056 alignments per read
+Hit Rate: 95.457%
+Program complete: 5290003 milliseconds (5290 seconds)
+

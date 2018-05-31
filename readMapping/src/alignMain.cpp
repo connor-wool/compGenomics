@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     AlignmentTable at;
     at.setSequences(&gsv[0], &gsv[1]);
-    at.setScores(1,-2,-5,-2);
+    at.setScores(1,-1,-3,-1);
     if(alignType == 0){
         at.globalAlign();
     }

@@ -550,3 +550,69 @@ void SuffixTree::BruteFindLoc(string *read, vector<int> *positions){
         }
     }
 }
+
+void SuffixTree::QuickFindLoc(string *read, vector<int> *positions)
+{
+    SuffixNode *T = _root;
+    SuffixNode *next = nullptr;
+    int read_ptr = 0;
+    //int iteration = 0;
+
+    //track deepest node visited
+    int deepestDepth = 0;
+    SuffixNode *deepestNode = nullptr;
+
+    label_restart_while:
+    while (read_ptr < read->length())
+    {
+        next = nullptr;
+        for(int i = 0; i < T->_children.size(); i++){
+            SuffixNode *child = T->_children[i];
+            char childChar = _source[child->_edge.start];
+            if(childChar == (*read)[read_ptr])
+            {
+                next = child;
+                break;
+            }
+        }
+
+        if (next == nullptr)
+        {
+            //u = T;
+            if (T->_stringDepth > deepestDepth)// && u->_stringDepth >= _x)
+            {
+                deepestDepth = T->_stringDepth;
+                deepestNode = T;
+            }
+            T = T->_suffixLink;
+            goto label_restart_while;
+        }
+
+        char *comp = &_source[next->_edge.start];
+
+        for (int i = 0; i < next->_edge.length && read_ptr < read->length(); i++)
+        {
+            if ((*read)[read_ptr] != comp[i])
+            {
+                read_ptr -= i;
+                if (T->_stringDepth > deepestDepth)// && u->_stringDepth >= _x)
+                {
+                    deepestDepth = T->_stringDepth;
+                    deepestNode = T;
+                }
+                T = T->_suffixLink;
+                goto label_restart_while;
+            }
+            read_ptr++;
+        }
+        T = next;
+    }
+
+    if (deepestNode != nullptr)
+    {
+        for (int i = deepestNode->_start_leaf_index; i <= deepestNode->_end_leaf_index; i++)
+        {
+            positions->push_back(_A[i]);
+        }
+    }
+}

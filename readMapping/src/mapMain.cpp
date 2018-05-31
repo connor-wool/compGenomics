@@ -10,7 +10,7 @@
 #include <chrono>
 #include <fstream>
 
-#define VERBOSE_OUTPUT 1
+#define VERBOSE_OUTPUT 0
 
 using namespace std;
 using namespace std::chrono;
@@ -96,6 +96,7 @@ int main(int argc, char *argv[]){
 
         positions.clear();
         tree.BruteFindLoc(&g.sequence, &positions);
+        //tree.QuickFindLoc(&g.sequence, &positions);
 
         for (int p : positions)
         {

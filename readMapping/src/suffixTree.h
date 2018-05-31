@@ -58,7 +58,7 @@ class SuffixTree{
     void FindLongestMatchingRepeat();
     void PrepareST();
     void PrepareSTRecursive(SuffixNode *n);
-    //void FindLoc(string read, SuffixNode *n);
+    void QuickFindLoc(string *read, vector<int> *positions);
     vector<int> FindLoc(string read);
     void BruteFindLoc(string *read, vector<int> *positions);
 };
